@@ -1,1 +1,3 @@
-grep "TODO:" -r emblemsnake
+#!/bin/bash
+
+grep "TODO:" -r scraper server client

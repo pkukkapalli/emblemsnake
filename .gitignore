@@ -1,4 +1,5 @@
 /node_modules/
+server/node_modules/
 /public/build/
 .DS_Store
 .scrapy
@@ -6,3 +7,5 @@
 *.log
 *.swo
 *.swp
+.vscode
+*.code-workspace
