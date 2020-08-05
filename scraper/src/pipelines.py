@@ -69,5 +69,5 @@ class AssetsPipeline:
         for item in self.items:
             output[calculate_id(item)] = item_for_export(item)
 
-        with open('../client/assets/assets.json', 'w') as file:
+        with open('../app/assets/assets.json', 'w') as file:
             json.dump(output, file)

@@ -1,4 +1,5 @@
 export interface Part {
+  id: string;
   name: string;
   group: PartGroupType;
   path?: string;

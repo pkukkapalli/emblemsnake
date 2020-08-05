@@ -10,6 +10,7 @@ import {
 import { PartType, partTypeDisplayNames, Part } from '../constants/parts';
 import { calculateRoute } from '../constants/routes';
 
+import './emblem-static-preivew';
 import './emblem-split-view';
 import './emblem-preview';
 
@@ -99,7 +100,7 @@ export class EmblemMainMenu extends LitElement {
         padding: 0.4rem;
       }
 
-      .option-button emblem-preview {
+      .option-button emblem-static-preview {
         width: 100%;
         flex: 1;
       }
@@ -130,20 +131,12 @@ export class EmblemMainMenu extends LitElement {
     switch (partType) {
       case PartType.BACK:
         preview = html`
-          <emblem-preview
-            .backChoice=${this.backChoice}
-            .backPrimaryColor=${this.backPrimaryColor}
-            .backSecondaryColor=${this.backSecondaryColor}
-          ></emblem-preview>
+          <emblem-static-preview .part=${this.backChoice}></emblem-static-preview>
         `;
         break;
       case PartType.FRONT:
         preview = html`
-          <emblem-preview
-            .frontChoice=${this.frontChoice}
-            .frontPrimaryColor=${this.frontPrimaryColor}
-            .frontSecondaryColor=${this.frontSecondaryColor}
-          ></emblem-preview>
+          <emblem-static-preview .part=${this.frontChoice}></emblem-static-preview>
         `;
         break;
       case PartType.WORD_1:

@@ -22,12 +22,32 @@ function loadingState(): PartsState {
   };
 }
 
-function successState(json: Part[]): PartsState {
+function successState(json: Record<string, Part>): PartsState {
+  const backParts = [];
+  const frontParts = [];
+  const wordParts = [];
+  for (const id of Object.keys(json)) {
+    const part = json[id];
+    part.id = id;
+
+    if (part.path) {
+      part.path = `/assets/images/${part.path}`;
+    }
+    
+    if (backGroupTypes.has(part.group)) {
+      backParts.push(part);
+    } else if (frontGroupTypes.has(part.group)) {
+      frontParts.push(part);
+    } else if (wordGroupTypes.has(part.group)) {
+      wordParts.push(part);
+    }
+  }
+
   return {
     isLoading: false,
-    backParts: json.filter(part => backGroupTypes.has(part.group)),
-    frontParts: json.filter(part => frontGroupTypes.has(part.group)),
-    wordParts: json.filter(part => wordGroupTypes.has(part.group)),
+    backParts,
+    frontParts,
+    wordParts,
   };
 }
 

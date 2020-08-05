@@ -13,7 +13,7 @@ import { PartType, Part } from '../constants/parts';
 import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/iron-icons';
 import './emblem-split-view';
-import './emblem-preview';
+import './emblem-static-preivew';
 
 @customElement('emblem-image-menu')
 export class EmblemImageMenu extends LitElement {
@@ -141,7 +141,7 @@ export class EmblemImageMenu extends LitElement {
             this.dispatchEvent(new CustomEvent('select', { detail: { part } }));
           }}
         >
-          ${this.renderPreview(part)}
+          <emblem-static-preview .part=${part}></emblem-static-preview>
           <div class="${iconClasses}">
             <iron-icon icon="done"></iron-icon>
           </div>
@@ -150,30 +150,7 @@ export class EmblemImageMenu extends LitElement {
     `;
   }
 
-  private renderPreview(part: Part): TemplateResult {
-    switch (this.partType) {
-      case PartType.BACK:
-        return html`
-          <emblem-preview
-            .backChoice=${part}
-            .backPrimaryColor=${this.primaryColor}
-            .backSecondaryColor=${this.secondaryColor}
-          ></emblem-preview>
-        `;
-      case PartType.FRONT:
-        return html`
-          <emblem-preview
-            .frontChoice=${part}
-            .frontPrimaryColor=${this.primaryColor}
-            .frontSecondaryColor=${this.secondaryColor}
-          ></emblem-preview>
-        `;
-      default:
-        throw new Error(`${this.partType} is not an image type`);
-    }
-  }
-
   private isSelectedPart(part: Part): boolean {
-    return !!this.selected && this.selected.name === part.name;
+    return !!this.selected && this.selected.id === part.id;
   }
 }

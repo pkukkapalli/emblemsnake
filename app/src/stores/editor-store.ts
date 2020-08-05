@@ -31,14 +31,12 @@ const defaultState = {
 
 export class EditorStore {
   private state: EditorState;
-  private worker: Worker;
 
   private listener: (state: EditorState) => void;
 
   constructor(listener: (state: EditorState) => void) {
     this.state = defaultState;
     this.listener = listener;
-    this.worker = new Worker('../workers/rendering-worker.js');
   }
 
   connect(): void {
@@ -47,10 +45,6 @@ export class EditorStore {
       this.state = JSON.parse(state);
     }
     this.listener(this.state);
-    this.worker.postMessage('test');
-    this.worker.onmessage = function (): void {
-      console.log('main received reply');
-    };
   }
 
   setBackChoice(backChoice: Part): void {

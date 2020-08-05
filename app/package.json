@@ -6,17 +6,13 @@
     "format:prettier": "prettier \"**/*.js\" \"**/*.ts\" --write --ignore-path .gitignore",
     "lint": "npm run lint:eslint && npm run lint:prettier",
     "format": "npm run format:eslint && npm run format:prettier",
-    "test": "npm run tsc-main:build && npm run tsc-worker:build && npm run tsc-test:build && karma start --coverage",
-    "test:watch": "concurrently --kill-others --names tsc,karma \"npm run tsc-main:watch\" \"npm run tsc-worker:watch\" \"npm run tsc-test:watch\" \"karma start --auto-watch=true --single-run=false\"",
-    "build": "rimraf dist && npm run tsc-main:build && npm run tsc-worker:build && rollup -c rollup.config.js",
+    "test": "tsc && karma start --coverage",
+    "test:watch": "concurrently --kill-others --names tsc,karma \"npm run tsc:watch\" \"karma start --auto-watch=true --single-run=false\"",
+    "build": "rimraf dist && tsc && rollup -c rollup.config.js",
     "start:build": "npm run build && es-dev-server --root-dir dist --app-index index.html --open --compatibility none",
-    "start": "concurrently --kill-others --names tsc,es-dev-server \"npm run tsc-main:watch\" \"npm run tsc-worker:watch\" \"es-dev-server --app-index index.html --node-resolve --open --watch\"",
-    "tsc-main:build": "tsc -b tsconfig.main.json",
-    "tsc-main:watch": "tsc -b tsconfig.main.json --watch",
-    "tsc-worker:build": "tsc -b tsconfig.worker.json",
-    "tsc-worker:watch": "tsc -b tsconfig.worker.json --watch",
-    "tsc-test:build": "tsc -b tsconfig.test.json",
-    "tsc-test:watch": "tsc -b tsconfig.test.json --watch"
+    "start": "concurrently --kill-others --names tsc,es-dev-server \"npm run tsc:watch\" \"es-dev-server --app-index index.html --node-resolve --open --watch\"",
+    "tsc:build": "tsc",
+    "tsc:watch": "tsc --watch"
   },
   "devDependencies": {
     "eslint": "^6.1.0",
@@ -26,7 +22,7 @@
     "prettier": "^2.0.4",
     "eslint-config-prettier": "^6.11.0",
     "husky": "^1.0.0",
-    "lint-staged": "^8.0.0",
+    "lint-staged": "^10.0.0",
     "@open-wc/testing-karma": "^3.0.0",
     "deepmerge": "^3.2.0",
     "@open-wc/testing": "^2.0.0",
@@ -69,5 +65,11 @@
     "lit-element": "^2.0.1",
     "lit-html": "^1.0.0",
     "pwa-helpers": "^0.9.1"
+  },
+  "eslintConfig": {
+    "extends": [
+      "@open-wc/eslint-config",
+      "eslint-config-prettier"
+    ]
   }
 }
