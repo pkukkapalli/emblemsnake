@@ -7,7 +7,7 @@ from string import ascii_uppercase
 from urllib.parse import urlparse
 import scrapy
 from scrapy_splash import SplashRequest
-from src.items import EmblemPartGroup, EmblemPartItem
+from emblemscraper.items import EmblemPartGroup, EmblemPartItem
 
 
 class PartsSpider(scrapy.Spider):

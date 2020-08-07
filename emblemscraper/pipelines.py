@@ -6,7 +6,7 @@ app.
 import re
 import json
 import hashlib
-from src.items import image_groups
+from emblemscraper.items import image_groups
 
 
 def calculate_id(item):

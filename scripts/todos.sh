@@ -1,3 +1,3 @@
 #!/bin/bash
 
-grep "TODO:" -r scraper server client
+grep "TODO:" -r emblemscraper app

@@ -4,8 +4,8 @@ Settings to initialize scrapy
 
 BOT_NAME = 'emblemsnake'
 
-SPIDER_MODULES = ['src.spiders']
-NEWSPIDER_MODULE = 'src.spiders'
+SPIDER_MODULES = ['emblemscraper.spiders']
+NEWSPIDER_MODULE = 'emblemscraper.spiders'
 
 USER_AGENT = 'emblemsnake (+http://www.pradyothkukkapalli.com)'
 ROBOTSTXT_OBEY = True
@@ -30,9 +30,9 @@ ITEM_PIPELINES = {
     # Allow scrapy to download files such as images
     'scrapy.pipelines.files.FilesPipeline': 100,
     # Publish emblem assets for the emblem snake app to use
-    'src.pipelines.AssetsPipeline': 300
+    'emblemscraper.pipelines.AssetsPipeline': 300
 }
-FILES_STORE = '../app/assets/images'
+FILES_STORE = 'app/assets/images'
 
 AUTOTHROTTLE_ENABLED = True
 # The average number of requests Scrapy should be sending in parallel to
