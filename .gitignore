@@ -1,10 +1,26 @@
-/node_modules/
-/public/build/
+## editors
+/.idea
+/.vscode
+
+## system files
 .DS_Store
-.scrapy
-.ycm_extra_conf.py
-*.log
-*.swo
-*.swp
-.vscode
-*.code-workspace
+
+## npm
+/node_modules/
+/npm-debug.log
+
+## testing
+/coverage/
+
+## temp folders
+/.tmp/
+
+# build
+/_site/
+/dist/
+/out-tsc/
+
+# scrapy
+/crawl.log
+/.scrapy/
+/*.code-workspace

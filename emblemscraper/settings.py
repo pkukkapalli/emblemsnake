@@ -32,7 +32,7 @@ ITEM_PIPELINES = {
     # Publish emblem assets for the emblem snake app to use
     'emblemscraper.pipelines.AssetsPipeline': 300
 }
-FILES_STORE = 'app/assets/images'
+FILES_STORE = 'assets/images'
 
 AUTOTHROTTLE_ENABLED = True
 # The average number of requests Scrapy should be sending in parallel to
