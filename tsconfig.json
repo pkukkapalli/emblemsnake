@@ -10,7 +10,7 @@
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "importHelpers": true,
-    "outDir": "out-tsc"
+    "outDir": "out-tsc",
   },
-  "include": ["**/*.ts"],
+  "include": ["app/**/*.ts"],
 }

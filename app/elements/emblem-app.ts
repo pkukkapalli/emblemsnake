@@ -1,272 +1,286 @@
-import {
-  LitElement,
-  html,
-  property,
-  customElement,
-  TemplateResult,
-} from 'lit-element';
-import { PartType } from '../constants/parts';
-import { ViewType } from '../constants/routes';
-import { RouterStore } from '../stores/router-store';
+import {LitElement, html, customElement, property, TemplateResult, CSSResult, css} from 'lit-element';
 import { PartsStore, PartsState } from '../stores/parts-store';
-import { EditorStore, EditorState } from '../stores/editor-store';
-import { ColorsStore, ColorsState } from '../stores/colors-store';
+import { classMap } from 'lit-html/directives/class-map';
+import { Part, backGroupTypes, PartGroupType, groupTypeDisplayNames, frontGroupTypes, wordGroupTypes } from '../constants/parts';
+import { styleMap } from 'lit-html/directives/style-map';
 
-import './emblem-main-menu';
-import './emblem-sub-menu';
-import './emblem-image-menu';
-import './emblem-word-menu';
-import './emblem-adjust';
-import './emblem-color-menu';
+enum Tab {
+  BACK = 0,
+  FRONT = 1,
+  WORD_1 = 2,
+  WORD_2 = 3,
+}
+
+const tabDisplayNames = new Map([
+  [Tab.BACK, 'Back'],
+  [Tab.FRONT, 'Front'],
+  [Tab.WORD_1, 'Word 1'],
+  [Tab.WORD_2, 'Word 2'],
+]);
+
+const tabDefaultGroups = new Map([
+  [Tab.BACK, PartGroupType.BACK_NORMAL],
+  [Tab.FRONT, PartGroupType.FRONT_NORMAL],
+  [Tab.WORD_1, PartGroupType.WORD_NUMBER],
+  [Tab.WORD_2, PartGroupType.WORD_NUMBER],
+]);
 
 @customElement('emblem-app')
 export class EmblemApp extends LitElement {
-  private editorStore: EditorStore;
-
-  private partsStore: PartsStore;
-
-  private colorsStore: ColorsStore;
-
-  private routerStore: RouterStore;
-
-  @property({ type: Object })
-  private editorState?: EditorState;
+  private readonly partsStore: PartsStore;
 
   @property({ type: Object })
   private partsState?: PartsState;
 
-  @property({ type: Object })
-  private colorsState?: ColorsState;
+  @property({ type: Number })
+  private tab: Tab;
 
   @property({ type: String })
-  private view: ViewType;
+  private group: PartGroupType;
+
+  @property({ type: String })
+  private backChoice: string;
+
+  @property({ type: String })
+  private frontChoice: string;
+
+  @property({ type: String })
+  private word1Choice: string;
+
+  @property({ type: String })
+  private word2Choice: string;
 
   constructor() {
     super();
-    this.view = ViewType.MAIN_MENU;
 
-    this.editorStore = new EditorStore(state => {
-      this.editorState = state;
-    });
     this.partsStore = new PartsStore(state => {
       this.partsState = state;
     });
-    this.colorsStore = new ColorsStore(state => {
-      this.colorsState = state;
-    });
-    this.routerStore = new RouterStore(view => {
-      this.view = view;
-    });
+
+    this.tab = Tab.BACK;
+    this.group = PartGroupType.BACK_NORMAL;
+    this.backChoice = '';
+    this.frontChoice = '';
+    this.word1Choice = '';
+    this.word2Choice = '';
   }
 
-  connectedCallback(): void {
+  static get styles(): CSSResult {
+    return css`
+      .container {
+        display: flex;
+        flex-direction: row;
+        height: 100%;
+      }
+
+      .menu {
+        flex: 6;
+        height: 100%;
+        background: lightgray;
+        overflow: auto;
+        padding: 1rem;
+        box-sizing: border-box;
+      }
+
+      .tabs {
+        margin-bottom: 4rem;
+        display: flex;
+        flex-direction: row;
+      }
+
+      button {
+        width: 10rem;
+        height: 3rem;
+        border: none;
+        text-transform: uppercase;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 200ms ease-in;
+        box-sizing: border-box;
+        padding: 0;
+        margin: 0;
+        background: transparent;
+      }
+
+      button:hover, button.selected {
+        background: #eee;
+        font-weight: bold;
+      }
+
+      button:focus {
+        outline: none;
+      }
+
+      .parts-container {
+        display: flex;
+        flex-direction: row;
+      }
+
+      .groups {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .parts {
+        height: 100%;
+        margin: auto;
+        background: #eee;
+      }
+
+      .part-image {
+        display: inline-block;
+        width: 150px;
+        height: 150px;
+        background-position: center;
+        background-size: cover;
+        cursor: pointer;
+        box-sizing: border-box;
+        border: 3px solid transparent;
+      }
+
+      .part-image:hover {
+        border: 3px solid #fff;
+      }
+
+      .preview {
+        flex: 4;
+        height: 100%;
+        background: black;
+      }
+    `;
+  }
+
+  connectedCallback() {
     super.connectedCallback();
-    this.editorStore.connect();
     this.partsStore.connect();
-    this.colorsStore.connect();
-    this.routerStore.connect();
   }
 
   render(): TemplateResult {
-    switch (this.view) {
-      case ViewType.MAIN_MENU:
-        return html`
-          <emblem-main-menu
-            .backChoice=${this.editorState?.backChoice}
-            .backPrimaryColor=${this.editorState?.backPrimaryColor}
-            .backSecondaryColor=${this.editorState?.backSecondaryColor}
-            .frontChoice=${this.editorState?.frontChoice}
-            .frontPrimaryColor=${this.editorState?.frontPrimaryColor}
-            .frontSecondaryColor=${this.editorState?.frontSecondaryColor}
-            .word1Choice=${this.editorState?.word1Choice}
-            .word1PrimaryColor=${this.editorState?.word1PrimaryColor}
-            .word1SecondaryColor=${this.editorState?.word1SecondaryColor}
-            .word2Choice=${this.editorState?.word2Choice}
-            .word2PrimaryColor=${this.editorState?.word2PrimaryColor}
-            .word2SecondaryColor=${this.editorState?.word2SecondaryColor}
-          ></emblem-main-menu>
-        `;
+    return html`
+      <div class="container">
+        <div class="menu">
+          ${this.renderTabs()}
+          ${this.renderParts()}
+        </div>
+        <div class="preview">
 
-      case ViewType.BACK_MENU:
-        return html`
-          <emblem-sub-menu
-            .partType=${PartType.BACK}
-            .choice=${this.editorState?.backChoice}
-            .primaryColor=${this.editorState?.backPrimaryColor}
-            .secondaryColor=${this.editorState?.backSecondaryColor}
-          ></emblem-sub-menu>
-        `;
-      case ViewType.CHOOSE_BACK_MENU:
-        return html`
-          <emblem-image-menu
-            .partType=${PartType.BACK}
-            .parts=${this.partsState?.backParts}
-            .selected=${this.editorState?.backChoice}
-            .primaryColor=${this.editorState?.backPrimaryColor}
-            .secondaryColor=${this.editorState?.backSecondaryColor}
-            @select=${(event: CustomEvent): void => {
-              this.editorStore.setBackChoice(event.detail.part);
-            }}
-          >
-          </emblem-image-menu>
-        `;
-      case ViewType.ADJUST_BACK_MENU:
-        return html` <emblem-adjust></emblem-adjust> `;
-      case ViewType.PRIMARY_COLOR_BACK_MENU:
-        return html`
-          <emblem-color-menu
-            .palette=${this.colorsState?.palette}
-            .selected=${this.editorState?.backPrimaryColor}
-            @select=${(event: CustomEvent): void => {
-              this.editorStore.setBackPrimaryColor(event.detail.color);
-            }}
-          ></emblem-color-menu>
-        `;
-      case ViewType.SECONDARY_COLOR_BACK_MENU:
-        return html`
-          <emblem-color-menu
-            .palette=${this.colorsState?.palette}
-            .selected=${this.editorState?.backSecondaryColor}
-            @select=${(event: CustomEvent): void => {
-              this.editorStore.setBackSecondaryColor(event.detail.color);
-            }}
-          ></emblem-color-menu>
-        `;
+        </div>
+      </div>
+    `;
+  }
 
-      case ViewType.FRONT_MENU:
-        return html`
-          <emblem-sub-menu
-            .partType=${PartType.FRONT}
-            .choice=${this.editorState?.frontChoice}
-            .primaryColor=${this.editorState?.frontPrimaryColor}
-            .secondaryColor=${this.editorState?.frontSecondaryColor}
-          ></emblem-sub-menu>
-        `;
-      case ViewType.CHOOSE_FRONT_MENU:
-        return html`
-          <emblem-image-menu
-            .partType=${PartType.FRONT}
-            .parts=${this.partsState?.frontParts}
-            .selected=${this.editorState?.frontChoice}
-            .primaryColor=${this.editorState?.frontPrimaryColor}
-            .secondaryColor=${this.editorState?.frontSecondaryColor}
-            @select=${(event: CustomEvent): void => {
-              this.editorStore.setFrontChoice(event.detail.part);
-            }}
-          >
-          </emblem-image-menu>
-        `;
-      case ViewType.ADJUST_FRONT_MENU:
-        return html` <emblem-adjust></emblem-adjust> `;
-      case ViewType.PRIMARY_COLOR_FRONT_MENU:
-        return html`
-          <emblem-color-menu
-            .palette=${this.colorsState?.palette}
-            .selected=${this.editorState?.frontPrimaryColor}
-            @select=${(event: CustomEvent): void => {
-              this.editorStore.setFrontPrimaryColor(event.detail.color);
-            }}
-          ></emblem-color-menu>
-        `;
-      case ViewType.SECONDARY_COLOR_FRONT_MENU:
-        return html`
-          <emblem-color-menu
-            .palette=${this.colorsState?.palette}
-            .selected=${this.editorState?.frontSecondaryColor}
-            @select=${(event: CustomEvent): void => {
-              this.editorStore.setFrontSecondaryColor(event.detail.color);
-            }}
-          ></emblem-color-menu>
-        `;
+  private renderTabs(): TemplateResult {
+    return html`
+      <div class="tabs">
+        ${this.renderTab(Tab.BACK)}
+        ${this.renderTab(Tab.FRONT)}
+        ${this.renderTab(Tab.WORD_1)}
+        ${this.renderTab(Tab.WORD_2)}
+      </div>
+    `;
+  }
 
-      case ViewType.WORD1_MENU:
-        return html`
-          <emblem-sub-menu
-            .partType=${PartType.WORD_1}
-            .choice=${this.editorState?.word1Choice}
-            .primaryColor=${this.editorState?.word1PrimaryColor}
-            .secondaryColor=${this.editorState?.word1SecondaryColor}
-          ></emblem-sub-menu>
-        `;
-      case ViewType.CHOOSE_WORD1_MENU:
-        return html`
-          <emblem-word-menu
-            .parts=${this.partsState?.wordParts}
-            .selected=${this.editorState?.word1Choice}
-            @select=${(event: CustomEvent): void => {
-              this.editorStore.setWord1Choice(event.detail.part);
-            }}
-          >
-          </emblem-word-menu>
-        `;
-      case ViewType.ADJUST_WORD1_MENU:
-        return html` <emblem-adjust></emblem-adjust> `;
-      case ViewType.PRIMARY_COLOR_WORD1_MENU:
-        return html`
-          <emblem-color-menu
-            .palette=${this.colorsState?.palette}
-            .selected=${this.editorState?.word1PrimaryColor}
-            @select=${(event: CustomEvent): void => {
-              this.editorStore.setWord1PrimaryColor(event.detail.color);
-            }}
-          ></emblem-color-menu>
-        `;
-      case ViewType.SECONDARY_COLOR_WORD1_MENU:
-        return html`
-          <emblem-color-menu
-            .palette=${this.colorsState?.palette}
-            .selected=${this.editorState?.word1SecondaryColor}
-            @select=${(event: CustomEvent): void => {
-              this.editorStore.setWord1SecondaryColor(event.detail.color);
-            }}
-          ></emblem-color-menu>
-        `;
+  private renderTab(tab: Tab): TemplateResult {
+    return html`
+      <button 
+        class="${classMap({
+          'selected': this.tab === tab 
+        })}"
+        @click=${() => {
+          this.tab = tab;
+          this.group = tabDefaultGroups.get(tab) || PartGroupType.BACK_NORMAL;
+        }}>
+        ${tabDisplayNames.get(tab)}
+      </button>
+    `;
+  }
 
-      case ViewType.WORD2_MENU:
-        return html`
-          <emblem-sub-menu
-            .partType=${PartType.WORD_2}
-            .choice=${this.editorState?.word2Choice}
-            .primaryColor=${this.editorState?.word2PrimaryColor}
-            .secondaryColor=${this.editorState?.word2SecondaryColor}
-          ></emblem-sub-menu>
-        `;
-      case ViewType.CHOOSE_WORD2_MENU:
-        return html`
-          <emblem-word-menu
-            .parts=${this.partsState?.wordParts}
-            .selected=${this.editorState?.word2Choice}
-            @select=${(event: CustomEvent): void => {
-              this.editorStore.setWord2Choice(event.detail.part);
-            }}
-          >
-          </emblem-word-menu>
-        `;
-      case ViewType.ADJUST_WORD2_MENU:
-        return html` <emblem-adjust></emblem-adjust> `;
-      case ViewType.PRIMARY_COLOR_WORD2_MENU:
-        return html`
-          <emblem-color-menu
-            .palette=${this.colorsState?.palette}
-            .selected=${this.editorState?.word2PrimaryColor}
-            @select=${(event: CustomEvent): void => {
-              this.editorStore.setWord2PrimaryColor(event.detail.color);
-            }}
-          ></emblem-color-menu>
-        `;
-      case ViewType.SECONDARY_COLOR_WORD2_MENU:
-        return html`
-          <emblem-color-menu
-            .palette=${this.colorsState?.palette}
-            .selected=${this.editorState?.word2SecondaryColor}
-            @select=${(event: CustomEvent): void => {
-              this.editorStore.setWord2SecondaryColor(event.detail.color);
-            }}
-          ></emblem-color-menu>
-        `;
-      default:
-        // TODO: create a proper 404 component
-        return html` 404 Not Found `;
+  private renderParts(): TemplateResult {
+    const parts = this.getParts();
+    const groups = this.getGroups();
+    return html`
+      <div class="parts-container">
+        <div class="groups">
+          ${Array.from(groups).map(group => this.renderGroup(group))}
+        </div>
+        <div class="parts">
+          ${Object.keys(parts).map(key => {
+            const part = parts[key];
+            return this.renderPart(key, part);
+          })}
+        </div>
+      </div>
+    `;
+  }
+
+  private renderGroup(group: PartGroupType): TemplateResult {
+    return html`
+      <button
+        class=${classMap({
+          'selected': this.group === group
+        })}
+        @click=${() => this.group = group}>
+        ${groupTypeDisplayNames.get(group)}
+      </button>
+    `;
+  }
+
+  private renderPart(key: string, part: Part): TemplateResult {
+    const choices = new Set([
+      this.backChoice,
+      this.frontChoice,
+      this.word1Choice,
+      this.word2Choice,
+    ]);
+    return html`
+      <div
+        style=${styleMap({
+          backgroundImage: `url('${part.path}')`
+        })}
+        class="part-image">
+        <div
+          class=${classMap({
+            'part-image-overlay': true,
+            'selected': choices.has(key),
+          })}>
+        </div>
+      </div>
+    `;
+  }
+
+  private getParts(): Record<string, Part> {
+    let parts;
+    switch (this.tab) {
+      case Tab.BACK:
+        parts = this.partsState?.backParts || {};
+        break;
+      case Tab.FRONT:
+        parts = this.partsState?.frontParts || {};
+        break;
+      case Tab.WORD_1:
+      case Tab.WORD_2:
+        parts = this.partsState?.wordParts || {};
+        break;
+    }
+
+    const result: Record<string, Part> = {};
+    for (const key of Object.keys(parts)) {
+      if (parts[key].group === this.group) {
+        result[key] = parts[key];
+      }
+    }
+    return result;
+  }
+
+  private getGroups(): Set<PartGroupType> {
+    switch (this.tab) {
+      case Tab.BACK:
+        return backGroupTypes;
+      case Tab.FRONT:
+        return frontGroupTypes;
+      case Tab.WORD_1:
+      case Tab.WORD_2:
+        return wordGroupTypes;
     }
   }
 }

@@ -1,26 +1,9 @@
 export interface Part {
-  id: string;
   name: string;
   group: PartGroupType;
-  path?: string;
+  path: string;
 }
 
-// TODO: replace with an integer enum
-export enum PartType {
-  BACK = 'BACK',
-  FRONT = 'FRONT',
-  WORD_1 = 'WORD_1',
-  WORD_2 = 'WORD_2',
-}
-
-export const partTypeDisplayNames = new Map([
-  [PartType.BACK, 'Back'],
-  [PartType.FRONT, 'Front'],
-  [PartType.WORD_1, 'Word 1'],
-  [PartType.WORD_2, 'Word 2'],
-]);
-
-// TODO: replace with an integer enum
 export enum PartGroupType {
   BACK_NORMAL = 'BACK_NORMAL',
   BACK_SPECIAL = 'BACK_SPECIAL',
@@ -34,6 +17,20 @@ export enum PartGroupType {
   WORD_PHONETIC = 'WORD_PHONETIC',
   WORD_CODENAMES = 'WORD_CODENAMES',
 }
+
+export const groupTypeDisplayNames = new Map([
+  [PartGroupType.BACK_NORMAL, 'Normal'],
+  [PartGroupType.BACK_SPECIAL, 'Special'],
+  [PartGroupType.FRONT_NORMAL, 'Normal'],
+  [PartGroupType.FRONT_SPECIAL, 'Special'],
+  [PartGroupType.FRONT_ANIMALS, 'Animals'],
+  [PartGroupType.FRONT_CODENAMES, 'Codenames'],
+  [PartGroupType.WORD_NORMAL, 'Normal'],
+  [PartGroupType.WORD_NUMBER, 'Numbers'],
+  [PartGroupType.WORD_LETTER, 'Letter'],
+  [PartGroupType.WORD_PHONETIC, 'Phonetic'],
+  [PartGroupType.WORD_CODENAMES, 'Codenames'],
+]);
 
 export const backGroupTypes = new Set([
   PartGroupType.BACK_NORMAL,

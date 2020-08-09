@@ -84,7 +84,7 @@ class PartsSpider(scrapy.Spider):
             yield EmblemPartItem(name=code, group=EmblemPartGroup.WORD_PHONETIC)
 
         # Codenames
-        for code in response.css('h3:contains(Codenames) + ul').css(
+        for code in response.css('h3:contains(Codenames) + p + ul').css(
                 'li::text').getall():
             yield EmblemPartItem(name=code,
                                  group=EmblemPartGroup.WORD_CODENAMES)
