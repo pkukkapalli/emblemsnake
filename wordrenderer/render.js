@@ -19,6 +19,7 @@ function renderWordToImage(word, path) {
   context.fillStyle = 'black';
   context.fillText(word, 512, 512);
   context.strokeStyle = 'white';
+  context.lineWidth = 6;
   context.strokeText(word, 512, 512);
 
   const out = createWriteStream(path);

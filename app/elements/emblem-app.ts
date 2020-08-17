@@ -1,24 +1,15 @@
-import {LitElement, html, customElement, property, TemplateResult, CSSResult, css} from 'lit-element';
+import {LitElement, html, customElement, property, TemplateResult, CSSResult, css, internalProperty} from 'lit-element';
 import { PartsStore, PartsState } from '../stores/parts-store';
-import { classMap } from 'lit-html/directives/class-map';
-import { Part, backGroupTypes, PartGroupType, groupTypeDisplayNames, frontGroupTypes, wordGroupTypes } from '../constants/parts';
-import { styleMap } from 'lit-html/directives/style-map';
+import { Part, backGroupTypes, PartGroupType, frontGroupTypes, wordGroupTypes } from '../constants/parts';
+import { ColorsStore, ColorsState } from '../stores/colors-store';
+import { Tab } from './emblem-tabs';
+import { Tab as ColorTab } from './emblem-color-menu';
+import './emblem-image-menu';
+import './emblem-word-menu';
+import './emblem-preview';
+import { EditorState, EditorStore } from '../stores/editor-store';
 
-enum Tab {
-  BACK = 0,
-  FRONT = 1,
-  WORD_1 = 2,
-  WORD_2 = 3,
-}
-
-const tabDisplayNames = new Map([
-  [Tab.BACK, 'Back'],
-  [Tab.FRONT, 'Front'],
-  [Tab.WORD_1, 'Word 1'],
-  [Tab.WORD_2, 'Word 2'],
-]);
-
-const tabDefaultGroups = new Map([
+const defaultGroupForTab = new Map([
   [Tab.BACK, PartGroupType.BACK_NORMAL],
   [Tab.FRONT, PartGroupType.FRONT_NORMAL],
   [Tab.WORD_1, PartGroupType.WORD_NUMBER],
@@ -28,41 +19,41 @@ const tabDefaultGroups = new Map([
 @customElement('emblem-app')
 export class EmblemApp extends LitElement {
   private readonly partsStore: PartsStore;
+  private readonly colorsStore: ColorsStore;
+  private readonly editorStore: EditorStore;
 
-  @property({ type: Object })
-  private partsState?: PartsState;
+  @property()
+  partsState?: PartsState;
 
-  @property({ type: Number })
-  private tab: Tab;
+  @property()
+  colorsState?: ColorsState;
 
-  @property({ type: String })
-  private group: PartGroupType;
+  @property()
+  editorState?: EditorState;
 
-  @property({ type: String })
-  private backChoice: string;
+  @internalProperty()
+  private tab = Tab.BACK;
 
-  @property({ type: String })
-  private frontChoice: string;
+  @internalProperty()
+  private group = defaultGroupForTab.get(Tab.BACK);
 
-  @property({ type: String })
-  private word1Choice: string;
-
-  @property({ type: String })
-  private word2Choice: string;
+  @internalProperty()
+  private primaryColorTab = ColorTab.MAIN;
+  
+  @internalProperty()
+  private secondaryColorTab = ColorTab.MAIN;
 
   constructor() {
     super();
-
     this.partsStore = new PartsStore(state => {
       this.partsState = state;
     });
-
-    this.tab = Tab.BACK;
-    this.group = PartGroupType.BACK_NORMAL;
-    this.backChoice = '';
-    this.frontChoice = '';
-    this.word1Choice = '';
-    this.word2Choice = '';
+    this.colorsStore = new ColorsStore(state => {
+      this.colorsState = state;
+    });
+    this.editorStore = new EditorStore(state => {
+      this.editorState = state;
+    });
   }
 
   static get styles(): CSSResult {
@@ -82,70 +73,27 @@ export class EmblemApp extends LitElement {
         box-sizing: border-box;
       }
 
-      .tabs {
+      emblem-tabs {
         margin-bottom: 4rem;
+      }
+
+      .colors {
         display: flex;
         flex-direction: row;
+        margin-bottom: 4rem;
       }
 
-      button {
-        width: 10rem;
-        height: 3rem;
-        border: none;
-        text-transform: uppercase;
-        cursor: pointer;
-        font-weight: bold;
-        transition: all 200ms ease-in;
-        box-sizing: border-box;
-        padding: 0;
-        margin: 0;
-        background: transparent;
+      emblem-color-menu {
+        flex: 1;
       }
 
-      button:hover, button.selected {
-        background: #eee;
-        font-weight: bold;
+      emblem-color-menu:not(:first-child) {
+        margin-inline-start: 1rem;
       }
 
-      button:focus {
-        outline: none;
-      }
-
-      .parts-container {
-        display: flex;
-        flex-direction: row;
-      }
-
-      .groups {
-        display: flex;
-        flex-direction: column;
-      }
-
-      .parts {
-        height: 100%;
-        margin: auto;
-        background: #eee;
-      }
-
-      .part-image {
-        display: inline-block;
-        width: 150px;
-        height: 150px;
-        background-position: center;
-        background-size: cover;
-        cursor: pointer;
-        box-sizing: border-box;
-        border: 3px solid transparent;
-      }
-
-      .part-image:hover {
-        border: 3px solid #fff;
-      }
-
-      .preview {
+      emblem-preview {
         flex: 4;
         height: 100%;
-        background: black;
       }
     `;
   }
@@ -153,99 +101,199 @@ export class EmblemApp extends LitElement {
   connectedCallback() {
     super.connectedCallback();
     this.partsStore.connect();
+    this.colorsStore.connect();
+    this.editorStore.connect();
   }
 
   render(): TemplateResult {
     return html`
       <div class="container">
+        <emblem-preview
+          .backChoice=${this.getBackChoice()}
+          .frontChoice=${this.getFrontChoice()}
+          .word1Choice=${this.getWord1Choice()}
+          .word2Choice=${this.getWord2Choice()}>
+        </emblem-preview>
         <div class="menu">
           ${this.renderTabs()}
+          ${this.renderColors()}
           ${this.renderParts()}
-        </div>
-        <div class="preview">
-
         </div>
       </div>
     `;
+  }
+
+  private getBackChoice(): Part | undefined {
+    return this.partsState?.backParts[this.editorState?.backChoice || ''];
+  }
+
+  private getFrontChoice(): Part | undefined {
+    return this.partsState?.frontParts[this.editorState?.frontChoice || ''];
+  }
+
+  private getWord1Choice(): Part | undefined {
+    return this.partsState?.wordParts[this.editorState?.word1Choice || ''];
+  }
+
+  private getWord2Choice(): Part | undefined {
+    return this.partsState?.wordParts[this.editorState?.word2Choice || ''];
   }
 
   private renderTabs(): TemplateResult {
     return html`
-      <div class="tabs">
-        ${this.renderTab(Tab.BACK)}
-        ${this.renderTab(Tab.FRONT)}
-        ${this.renderTab(Tab.WORD_1)}
-        ${this.renderTab(Tab.WORD_2)}
-      </div>
+      <emblem-tabs
+        .tab=${this.tab}
+        @tab-change=${(event: CustomEvent) => this.handleTabChange(event.detail.tab)}>
+      </emblem-tabs>
     `;
   }
 
-  private renderTab(tab: Tab): TemplateResult {
+  private handleTabChange(tab: Tab) {
+    this.tab = tab;
+    this.group = defaultGroupForTab.get(tab);
+  }
+
+  private renderColors(): TemplateResult {
     return html`
-      <button 
-        class="${classMap({
-          'selected': this.tab === tab 
-        })}"
-        @click=${() => {
-          this.tab = tab;
-          this.group = tabDefaultGroups.get(tab) || PartGroupType.BACK_NORMAL;
-        }}>
-        ${tabDisplayNames.get(tab)}
-      </button>
+      <div class="colors">
+        <emblem-color-menu
+          .tab=${this.primaryColorTab}
+          .colorsState=${this.colorsState}
+          .selection=${this.getPrimaryColorSelection()}
+          @tab-change=${(event: CustomEvent) => this.primaryColorTab = event.detail.tab}
+          @select=${(event: CustomEvent) => this.handlePrimaryColorSelection(event)}>
+        </emblem-color-menu>
+        <emblem-color-menu
+          .tab=${this.secondaryColorTab}
+          .colorsState=${this.colorsState}
+          .selection=${this.getSecondaryColorSelection()}
+          @tab-change=${(event: CustomEvent) => this.secondaryColorTab = event.detail.tab}
+          @select=${(event: CustomEvent) => this.handleSecondaryColorSelection(event)}>
+        </emblem-color-menu>
+      </div>
     `;
   }
 
   private renderParts(): TemplateResult {
     const parts = this.getParts();
     const groups = this.getGroups();
-    return html`
-      <div class="parts-container">
-        <div class="groups">
-          ${Array.from(groups).map(group => this.renderGroup(group))}
-        </div>
-        <div class="parts">
-          ${Object.keys(parts).map(key => {
-            const part = parts[key];
-            return this.renderPart(key, part);
-          })}
-        </div>
-      </div>
-    `;
+    if (this.tab === Tab.BACK || this.tab === Tab.FRONT) {
+      return html`
+        <emblem-image-menu
+          .parts=${parts}
+          .groups=${groups}
+          .selectedGroup=${this.group}
+          .selection=${this.getPartSelection()}
+          @group-change=${(event: CustomEvent) => this.handleGroupChange(event)}
+          @select=${(event: CustomEvent) => this.handlePartSelection(event)}>
+        </emblem-image-menu>
+      `;
+    } else {
+      return html`
+        <emblem-word-menu
+          .parts=${parts}
+          .groups=${groups}
+          .selectedGroup=${this.group}
+          .selection=${this.getPartSelection()}
+          @group-change=${(event: CustomEvent) => this.handleGroupChange(event)}
+          @select=${(event: CustomEvent) => this.handlePartSelection(event)}>
+        </emblem-word-menu>
+      `;
+    }
   }
 
-  private renderGroup(group: PartGroupType): TemplateResult {
-    return html`
-      <button
-        class=${classMap({
-          'selected': this.group === group
-        })}
-        @click=${() => this.group = group}>
-        ${groupTypeDisplayNames.get(group)}
-      </button>
-    `;
+  private handleGroupChange(event: CustomEvent) {
+    this.group = event.detail.group;
   }
 
-  private renderPart(key: string, part: Part): TemplateResult {
-    const choices = new Set([
-      this.backChoice,
-      this.frontChoice,
-      this.word1Choice,
-      this.word2Choice,
-    ]);
-    return html`
-      <div
-        style=${styleMap({
-          backgroundImage: `url('${part.path}')`
-        })}
-        class="part-image">
-        <div
-          class=${classMap({
-            'part-image-overlay': true,
-            'selected': choices.has(key),
-          })}>
-        </div>
-      </div>
-    `;
+  private handlePartSelection(event: CustomEvent) {
+    switch (this.tab) {
+      case Tab.BACK:
+        this.editorStore.update({ backChoice: event.detail.selection });
+        break;
+      case Tab.FRONT:
+        this.editorStore.update({ frontChoice: event.detail.selection });
+        break;
+      case Tab.WORD_1:
+        this.editorStore.update({ word1Choice: event.detail.selection });
+        break;
+      case Tab.WORD_2:
+        this.editorStore.update({ word2Choice: event.detail.selection });
+        break;
+    }
+  }
+
+  private handlePrimaryColorSelection(event: CustomEvent) {
+    switch (this.tab) {
+      case Tab.BACK:
+        this.editorStore.update({ backPrimaryColor: event.detail.selection });
+        break;
+      case Tab.FRONT:
+        this.editorStore.update({ frontPrimaryColor: event.detail.selection });
+        break;
+      case Tab.WORD_1:
+        this.editorStore.update({ word1PrimaryColor: event.detail.selection });
+        break;
+      case Tab.WORD_2:
+        this.editorStore.update({ word2PrimaryColor: event.detail.selection });
+        break;
+    }
+  }
+
+  private handleSecondaryColorSelection(event: CustomEvent) {
+    switch (this.tab) {
+      case Tab.BACK:
+        this.editorStore.update({ backSecondaryColor: event.detail.selection });
+        break;
+      case Tab.FRONT:
+        this.editorStore.update({ frontSecondaryColor: event.detail.selection });
+        break;
+      case Tab.WORD_1:
+        this.editorStore.update({ word1SecondaryColor: event.detail.selection });
+        break;
+      case Tab.WORD_2:
+        this.editorStore.update({ word2SecondaryColor: event.detail.selection });
+        break;
+    }
+  }
+
+  private getPartSelection(): string {
+    switch (this.tab) {
+      case Tab.BACK:
+        return this.editorState?.backChoice || '';
+      case Tab.FRONT:
+        return this.editorState?.frontChoice || '';
+      case Tab.WORD_1:
+        return this.editorState?.word1Choice || '';
+      case Tab.WORD_2:
+        return this.editorState?.word2Choice || '';
+    }
+  }
+
+  private getPrimaryColorSelection(): string {
+    switch (this.tab) {
+      case Tab.BACK:
+        return this.editorState?.backPrimaryColor || '#000';
+      case Tab.FRONT:
+        return this.editorState?.frontPrimaryColor || '#000';
+      case Tab.WORD_1:
+        return this.editorState?.word1PrimaryColor || '#000';
+      case Tab.WORD_2:
+        return this.editorState?.word2PrimaryColor || '#000';
+    }
+  }
+
+  private getSecondaryColorSelection(): string {
+    switch (this.tab) {
+      case Tab.BACK:
+        return this.editorState?.backSecondaryColor || '#fff';
+      case Tab.FRONT:
+        return this.editorState?.frontSecondaryColor || '#fff';
+      case Tab.WORD_1:
+        return this.editorState?.word1SecondaryColor || '#fff';
+      case Tab.WORD_2:
+        return this.editorState?.word2SecondaryColor || '#fff';
+    }
   }
 
   private getParts(): Record<string, Part> {
@@ -269,18 +317,19 @@ export class EmblemApp extends LitElement {
         result[key] = parts[key];
       }
     }
+    
     return result;
   }
 
-  private getGroups(): Set<PartGroupType> {
+  private getGroups(): PartGroupType[] {
     switch (this.tab) {
       case Tab.BACK:
-        return backGroupTypes;
+        return Array.from(backGroupTypes);
       case Tab.FRONT:
-        return frontGroupTypes;
+        return Array.from(frontGroupTypes);
       case Tab.WORD_1:
       case Tab.WORD_2:
-        return wordGroupTypes;
+        return Array.from(wordGroupTypes);
     }
   }
 }

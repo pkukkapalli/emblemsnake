@@ -8,7 +8,7 @@ export interface PartsState {
   wordParts: Record<string, Part>;
 }
 
-function loadingState(): PartsState {
+export function loadingState(): PartsState {
   return {isLoading: true, backParts: {}, frontParts: {}, wordParts: {}};
 }
 
