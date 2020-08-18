@@ -110,9 +110,17 @@ export class EmblemApp extends LitElement {
       <div class="container">
         <emblem-preview
           .backChoice=${this.getBackChoice()}
+          .backPrimaryColor=${this.editorState?.backPrimaryColor}
+          .backSecondaryColor=${this.editorState?.backSecondaryColor}
           .frontChoice=${this.getFrontChoice()}
+          .frontPrimaryColor=${this.editorState?.frontPrimaryColor}
+          .frontSecondaryColor=${this.editorState?.frontSecondaryColor}
           .word1Choice=${this.getWord1Choice()}
-          .word2Choice=${this.getWord2Choice()}>
+          .word1PrimaryColor=${this.editorState?.word1PrimaryColor}
+          .word1SecondaryColor=${this.editorState?.word1SecondaryColor}
+          .word2Choice=${this.getWord2Choice()}
+          .word2PrimaryColor=${this.editorState?.word2PrimaryColor}
+          .word2SecondaryColor=${this.editorState?.word2SecondaryColor}>
         </emblem-preview>
         <div class="menu">
           ${this.renderTabs()}
@@ -273,26 +281,26 @@ export class EmblemApp extends LitElement {
   private getPrimaryColorSelection(): string {
     switch (this.tab) {
       case Tab.BACK:
-        return this.editorState?.backPrimaryColor || '#000';
+        return this.editorState?.backPrimaryColor || '#000000';
       case Tab.FRONT:
-        return this.editorState?.frontPrimaryColor || '#000';
+        return this.editorState?.frontPrimaryColor || '#000000';
       case Tab.WORD_1:
-        return this.editorState?.word1PrimaryColor || '#000';
+        return this.editorState?.word1PrimaryColor || '#000000';
       case Tab.WORD_2:
-        return this.editorState?.word2PrimaryColor || '#000';
+        return this.editorState?.word2PrimaryColor || '#000000';
     }
   }
 
   private getSecondaryColorSelection(): string {
     switch (this.tab) {
       case Tab.BACK:
-        return this.editorState?.backSecondaryColor || '#fff';
+        return this.editorState?.backSecondaryColor || '#ffffff';
       case Tab.FRONT:
-        return this.editorState?.frontSecondaryColor || '#fff';
+        return this.editorState?.frontSecondaryColor || '#ffffff';
       case Tab.WORD_1:
-        return this.editorState?.word1SecondaryColor || '#fff';
+        return this.editorState?.word1SecondaryColor || '#ffffff';
       case Tab.WORD_2:
-        return this.editorState?.word2SecondaryColor || '#fff';
+        return this.editorState?.word2SecondaryColor || '#ffffff';
     }
   }
 
