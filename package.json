@@ -58,6 +58,7 @@
   "author": "emblem-app",
   "license": "MIT",
   "dependencies": {
+    "jimp": "^0.16.0",
     "lit-element": "^2.0.1",
     "lit-html": "^1.0.0",
     "pwa-helpers": "^0.9.1"

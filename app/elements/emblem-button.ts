@@ -1,4 +1,12 @@
-import { customElement, LitElement, CSSResult, css, TemplateResult, html, property } from "lit-element";
+import {
+  customElement,
+  LitElement,
+  CSSResult,
+  css,
+  TemplateResult,
+  html,
+  property,
+} from 'lit-element';
 import { classMap } from 'lit-html/directives/class-map';
 
 @customElement('emblem-button')
@@ -27,7 +35,8 @@ export class EmblemButton extends LitElement {
         background: transparent;
       }
 
-      button:hover, button.selected {
+      button:hover,
+      button.selected {
         background: #eee;
       }
 
@@ -41,7 +50,8 @@ export class EmblemButton extends LitElement {
     return html`
       <button
         class=${classMap({ selected: this.selected })}
-        @click=${() => this.dispatchEvent(new CustomEvent('click', {}))}>
+        @click=${() => this.dispatchEvent(new CustomEvent('click', {}))}
+      >
         <slot></slot>
       </button>
     `;

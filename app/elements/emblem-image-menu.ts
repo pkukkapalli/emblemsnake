@@ -1,4 +1,12 @@
-import { LitElement, customElement, property, TemplateResult, html, CSSResult, css } from 'lit-element';
+import {
+  LitElement,
+  customElement,
+  property,
+  TemplateResult,
+  html,
+  CSSResult,
+  css,
+} from 'lit-element';
 import { PartGroupType, Part, groupTypeDisplayNames } from '../constants/parts';
 import './emblem-button';
 import { classMap } from 'lit-html/directives/class-map';
@@ -22,7 +30,7 @@ export class EmblemImageMenu extends LitElement {
       .container {
         display: flex;
         flex-direction: column;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
       }
 
       .tabs {
@@ -59,7 +67,7 @@ export class EmblemImageMenu extends LitElement {
       }
 
       .image-container::after {
-        content: "";
+        content: '';
         display: block;
         padding-bottom: 100%;
       }
@@ -108,7 +116,8 @@ export class EmblemImageMenu extends LitElement {
       <emblem-button
         class="tab"
         .selected=${group === this.selectedGroup}
-        @click=${() => this.dispatchEvent(this.createGroupChangeEvent(group))}>
+        @click=${() => this.dispatchEvent(this.createGroupChangeEvent(group))}
+      >
         ${groupTypeDisplayNames.get(group)}
       </emblem-button>
     `;
@@ -117,18 +126,22 @@ export class EmblemImageMenu extends LitElement {
   private createGroupChangeEvent(group: PartGroupType): CustomEvent {
     return new CustomEvent('group-change', {
       detail: {
-        group
-      }
+        group,
+      },
     });
   }
 
   private renderImage(key: string, part: Part): TemplateResult {
     return html`
       <div
-        class=${classMap({ 'image-container': true, selected: key === this.selection })}
-        @click=${() => this.dispatchEvent(this.createSelectEvent(key))}>
-        <img class="image" src=${part.path}>
-        <img class="check" src="/assets/check.svg">
+        class=${classMap({
+          'image-container': true,
+          selected: key === this.selection,
+        })}
+        @click=${() => this.dispatchEvent(this.createSelectEvent(key))}
+      >
+        <img class="image" src=${part.path} />
+        <img class="check" src="/assets/check.svg" />
       </div>
     `;
   }
@@ -136,8 +149,8 @@ export class EmblemImageMenu extends LitElement {
   private createSelectEvent(selection: string) {
     return new CustomEvent('select', {
       detail: {
-        selection
-      }
+        selection,
+      },
     });
   }
 }

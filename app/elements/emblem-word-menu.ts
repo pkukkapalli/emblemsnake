@@ -1,4 +1,12 @@
-import { LitElement, customElement, property, CSSResult, css, TemplateResult, html } from 'lit-element';
+import {
+  LitElement,
+  customElement,
+  property,
+  CSSResult,
+  css,
+  TemplateResult,
+  html,
+} from 'lit-element';
 import { PartGroupType, groupTypeDisplayNames, Part } from '../constants/parts';
 import './emblem-button';
 import { classMap } from 'lit-html/directives/class-map';
@@ -22,7 +30,7 @@ export class EmblemWordMenu extends LitElement {
       .container {
         display: flex;
         flex-direction: column;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
       }
 
       .tabs {
@@ -64,10 +72,10 @@ export class EmblemWordMenu extends LitElement {
         top: 0;
         left: 0;
         height: 3rem;
-        z-index: 2; 
+        z-index: 2;
         display: flex;
         align-items: center;
-        margin-left: 1rem;        
+        margin-left: 1rem;
       }
 
       .check {
@@ -105,7 +113,8 @@ export class EmblemWordMenu extends LitElement {
       <emblem-button
         class="tab"
         .selected=${group === this.selectedGroup}
-        @click=${() => this.dispatchEvent(this.createGroupChangeEvent(group))}>
+        @click=${() => this.dispatchEvent(this.createGroupChangeEvent(group))}
+      >
         ${groupTypeDisplayNames.get(group)}
       </emblem-button>
     `;
@@ -114,18 +123,22 @@ export class EmblemWordMenu extends LitElement {
   private createGroupChangeEvent(group: PartGroupType): CustomEvent {
     return new CustomEvent('group-change', {
       detail: {
-        group
-      }
+        group,
+      },
     });
   }
 
   private renderWord(key: string, part: Part): TemplateResult {
     return html`
       <div
-        class=${classMap({ 'word-container': true, selected: key === this.selection })}
-        @click=${() => this.dispatchEvent(this.createSelectEvent(key))}>
+        class=${classMap({
+          'word-container': true,
+          selected: key === this.selection,
+        })}
+        @click=${() => this.dispatchEvent(this.createSelectEvent(key))}
+      >
         <div class="word">${part.name}</div>
-        <img class="check" src="/assets/check.svg">
+        <img class="check" src="/assets/check.svg" />
       </div>
     `;
   }
@@ -133,8 +146,8 @@ export class EmblemWordMenu extends LitElement {
   private createSelectEvent(selection: string) {
     return new CustomEvent('select', {
       detail: {
-        selection
-      }
+        selection,
+      },
     });
   }
 }

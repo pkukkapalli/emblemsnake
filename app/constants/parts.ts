@@ -2,6 +2,7 @@ export interface Part {
   name: string;
   group: PartGroupType;
   path: string;
+  pathToSmallImage: string;
 }
 
 export enum PartGroupType {

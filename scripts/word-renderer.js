@@ -1,13 +1,15 @@
+#!/usr/bin/env node
+
 /* eslint-disable @typescript-eslint/no-var-requires */
-const {readFileSync, writeFileSync, createWriteStream} = require('fs');
-const {createCanvas} = require('canvas');
+const { readFileSync, writeFileSync, createWriteStream } = require('fs');
+const { createCanvas } = require('canvas');
 
 const wordGroups = new Set([
   'WORD_NUMBER',
   'WORD_LETTER',
   'WORD_NORMAL',
   'WORD_PHONETIC',
-  'WORD_CODENAMES'
+  'WORD_CODENAMES',
 ]);
 
 function renderWordToImage(word, path) {
@@ -30,7 +32,7 @@ function renderWordToImage(word, path) {
 const assetsJson = JSON.parse(readFileSync('assets/assets.json'));
 for (const key of Object.keys(assetsJson)) {
   const asset = assetsJson[key];
-  
+
   // Only rendering words
   if (!wordGroups.has(asset.group)) {
     continue;

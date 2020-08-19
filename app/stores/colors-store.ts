@@ -85,23 +85,41 @@ export class ColorsStore {
       this.listener({
         isLoading: false,
         bluescale: await this.fetchColorscale('/assets/bluescale.txt'),
-        bluescaleAlternative: await this.fetchColorscale('/assets/bluescale-alt.txt'),
+        bluescaleAlternative: await this.fetchColorscale(
+          '/assets/bluescale-alt.txt'
+        ),
         cyanscale: await this.fetchColorscale('/assets/cyanscale.txt'),
-        cyanscaleAlternative: await this.fetchColorscale('/assets/cyanscale-alt.txt'),
+        cyanscaleAlternative: await this.fetchColorscale(
+          '/assets/cyanscale-alt.txt'
+        ),
         grayscale: await this.fetchColorscale('/assets/grayscale.txt'),
-        grayscaleAlternative: await this.fetchColorscale('/assets/grayscale-alt.txt'),
+        grayscaleAlternative: await this.fetchColorscale(
+          '/assets/grayscale-alt.txt'
+        ),
         greenscale: await this.fetchColorscale('/assets/greenscale.txt'),
-        greenscaleAlternative: await this.fetchColorscale('/assets/greenscale-alt.txt'),
+        greenscaleAlternative: await this.fetchColorscale(
+          '/assets/greenscale-alt.txt'
+        ),
         orangescale: await this.fetchColorscale('/assets/orangescale.txt'),
-        orangescaleAlternative: await this.fetchColorscale('/assets/orangescale-alt.txt'),
+        orangescaleAlternative: await this.fetchColorscale(
+          '/assets/orangescale-alt.txt'
+        ),
         pinkscale: await this.fetchColorscale('/assets/pinkscale.txt'),
-        pinkscaleAlternative: await this.fetchColorscale('/assets/pinkscale-alt.txt'),
+        pinkscaleAlternative: await this.fetchColorscale(
+          '/assets/pinkscale-alt.txt'
+        ),
         purplescale: await this.fetchColorscale('/assets/purplescale.txt'),
-        purplescaleAlternative: await this.fetchColorscale('/assets/purplescale-alt.txt'),
+        purplescaleAlternative: await this.fetchColorscale(
+          '/assets/purplescale-alt.txt'
+        ),
         redscale: await this.fetchColorscale('/assets/redscale.txt'),
-        redscaleAlternative: await this.fetchColorscale('/assets/redscale-alt.txt'),
+        redscaleAlternative: await this.fetchColorscale(
+          '/assets/redscale-alt.txt'
+        ),
         yellowscale: await this.fetchColorscale('/assets/yellowscale.txt'),
-        yellowscaleAlternative: await this.fetchColorscale('/assets/yellowscale-alt.txt'),
+        yellowscaleAlternative: await this.fetchColorscale(
+          '/assets/yellowscale-alt.txt'
+        ),
       });
     } catch (error) {
       this.listener(errorState(error));

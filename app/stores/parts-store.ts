@@ -1,4 +1,9 @@
-import { Part, backGroupTypes, frontGroupTypes, wordGroupTypes } from '../constants/parts';
+import {
+  Part,
+  backGroupTypes,
+  frontGroupTypes,
+  wordGroupTypes,
+} from '../constants/parts';
 
 export interface PartsState {
   isLoading: boolean;
@@ -9,7 +14,7 @@ export interface PartsState {
 }
 
 export function loadingState(): PartsState {
-  return {isLoading: true, backParts: {}, frontParts: {}, wordParts: {}};
+  return { isLoading: true, backParts: {}, frontParts: {}, wordParts: {} };
 }
 
 function successState(json: Record<string, Part>): PartsState {
@@ -20,12 +25,13 @@ function successState(json: Record<string, Part>): PartsState {
   for (const id of Object.keys(json)) {
     const part = json[id];
     part.path = `/assets/images/${part.path}`;
-    
+    part.pathToSmallImage = `/assets/images/${part.pathToSmallImage}`;
+
     if (backGroupTypes.has(part.group)) backParts[id] = part;
     if (frontGroupTypes.has(part.group)) frontParts[id] = part;
     if (wordGroupTypes.has(part.group)) wordParts[id] = part;
   }
-  
+
   return {
     isLoading: false,
     backParts,
@@ -35,7 +41,13 @@ function successState(json: Record<string, Part>): PartsState {
 }
 
 function errorState(error: Error): PartsState {
-  return { isLoading: false, error, backParts: {}, frontParts: {}, wordParts: {} };
+  return {
+    isLoading: false,
+    error,
+    backParts: {},
+    frontParts: {},
+    wordParts: {},
+  };
 }
 
 type PartsStateListener = (state: PartsState) => void;

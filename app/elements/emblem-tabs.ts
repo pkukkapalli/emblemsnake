@@ -1,4 +1,12 @@
-import { customElement, LitElement, property, CSSResult, TemplateResult, css, html } from "lit-element";
+import {
+  customElement,
+  LitElement,
+  property,
+  CSSResult,
+  TemplateResult,
+  css,
+  html,
+} from 'lit-element';
 
 import './emblem-button';
 
@@ -35,7 +43,7 @@ export class EmblemTabs extends LitElement {
       .container {
         display: flex;
         flex-direction: row;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
       }
 
       .tab {
@@ -48,10 +56,8 @@ export class EmblemTabs extends LitElement {
   render(): TemplateResult {
     return html`
       <div class="container">
-        ${this.renderTab(Tab.BACK)}
-        ${this.renderTab(Tab.FRONT)}
-        ${this.renderTab(Tab.WORD_1)}
-        ${this.renderTab(Tab.WORD_2)}
+        ${this.renderTab(Tab.BACK)} ${this.renderTab(Tab.FRONT)}
+        ${this.renderTab(Tab.WORD_1)} ${this.renderTab(Tab.WORD_2)}
       </div>
     `;
   }
@@ -62,7 +68,8 @@ export class EmblemTabs extends LitElement {
         <emblem-button
           class="tab"
           selected
-          @click=${() => this.dispatchEvent(this.createTabChangeEvent(tab))}>
+          @click=${() => this.dispatchEvent(this.createTabChangeEvent(tab))}
+        >
           ${tabDisplayNames.get(tab)}
         </emblem-button>
       `;
@@ -70,7 +77,8 @@ export class EmblemTabs extends LitElement {
       return html`
         <emblem-button
           class="tab"
-          @click=${() => this.dispatchEvent(this.createTabChangeEvent(tab))}>
+          @click=${() => this.dispatchEvent(this.createTabChangeEvent(tab))}
+        >
           ${tabDisplayNames.get(tab)}
         </emblem-button>
       `;
@@ -80,8 +88,8 @@ export class EmblemTabs extends LitElement {
   private createTabChangeEvent(tab: Tab): CustomEvent {
     return new CustomEvent('tab-change', {
       detail: {
-        tab
-      }
+        tab,
+      },
     });
   }
 }

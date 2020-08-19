@@ -1,11 +1,19 @@
-import { customElement, LitElement, property, CSSResult, css, TemplateResult, html } from "lit-element";
+import {
+  customElement,
+  LitElement,
+  property,
+  CSSResult,
+  css,
+  TemplateResult,
+  html,
+} from 'lit-element';
 import { ColorsState } from '../stores/colors-store';
 import { styleMap } from 'lit-html/directives/style-map';
 import { classMap } from 'lit-html/directives/class-map';
 
 export enum Tab {
   MAIN,
-  ALTERNATE
+  ALTERNATE,
 }
 
 const tabDisplayNames = new Map([
@@ -29,7 +37,7 @@ export class EmblemColorMenu extends LitElement {
       .container {
         display: flex;
         flex-direction: column;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
       }
 
       .tabs {
@@ -67,7 +75,7 @@ export class EmblemColorMenu extends LitElement {
       }
 
       .color::after {
-        content: "";
+        content: '';
         display: block;
         padding-bottom: 100%;
       }
@@ -90,16 +98,12 @@ export class EmblemColorMenu extends LitElement {
     return html`
       <div class="container">
         <div class="tabs">
-          ${this.renderTab(Tab.MAIN)}
-          ${this.renderTab(Tab.ALTERNATE)}
+          ${this.renderTab(Tab.MAIN)} ${this.renderTab(Tab.ALTERNATE)}
         </div>
         <div class="colors">
-          ${this.renderGrayscaleRow()}
-          ${this.renderCrossColorRow(0)}
-          ${this.renderCrossColorRow(1)}
-          ${this.renderCrossColorRow(2)}
-          ${this.renderCrossColorRow(3)}
-          ${this.renderCrossColorRow(4)}
+          ${this.renderGrayscaleRow()} ${this.renderCrossColorRow(0)}
+          ${this.renderCrossColorRow(1)} ${this.renderCrossColorRow(2)}
+          ${this.renderCrossColorRow(3)} ${this.renderCrossColorRow(4)}
         </div>
       </div>
     `;
@@ -120,7 +124,11 @@ export class EmblemColorMenu extends LitElement {
   }
 
   private renderCrossColorRow(index: number): TemplateResult {
-    if (!this.colorsState || this.colorsState.isLoading || this.colorsState.error) {
+    if (
+      !this.colorsState ||
+      this.colorsState.isLoading ||
+      this.colorsState.error
+    ) {
       return html`<div></div>`;
     }
 
@@ -165,11 +173,12 @@ export class EmblemColorMenu extends LitElement {
 
   private renderColor(color: string): TemplateResult {
     return html`
-      <div 
+      <div
         class=${classMap({ color: true, selected: color === this.selection })}
         style=${styleMap({ backgroundColor: color })}
-        @click=${() => this.dispatchEvent(this.createSelectEvent(color))}>
-        <img class="check" src="/assets/check.svg">
+        @click=${() => this.dispatchEvent(this.createSelectEvent(color))}
+      >
+        <img class="check" src="/assets/check.svg" />
       </div>
     `;
   }
@@ -177,8 +186,8 @@ export class EmblemColorMenu extends LitElement {
   private createSelectEvent(selection: string): CustomEvent {
     return new CustomEvent('select', {
       detail: {
-        selection
-      }
+        selection,
+      },
     });
   }
 
@@ -188,7 +197,8 @@ export class EmblemColorMenu extends LitElement {
         <emblem-button
           class="tab"
           selected
-          @click=${() => this.dispatchEvent(this.createTabChangeEvent(tab))}>
+          @click=${() => this.dispatchEvent(this.createTabChangeEvent(tab))}
+        >
           ${tabDisplayNames.get(tab)}
         </emblem-button>
       `;
@@ -196,7 +206,8 @@ export class EmblemColorMenu extends LitElement {
       return html`
         <emblem-button
           class="tab"
-          @click=${() => this.dispatchEvent(this.createTabChangeEvent(tab))}>
+          @click=${() => this.dispatchEvent(this.createTabChangeEvent(tab))}
+        >
           ${tabDisplayNames.get(tab)}
         </emblem-button>
       `;
@@ -206,8 +217,8 @@ export class EmblemColorMenu extends LitElement {
   private createTabChangeEvent(tab: Tab): CustomEvent {
     return new CustomEvent('tab-change', {
       detail: {
-        tab
-      }
+        tab,
+      },
     });
   }
 }

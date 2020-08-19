@@ -1,4 +1,13 @@
-import { LitElement, customElement, property, CSSResult, css, TemplateResult, html, internalProperty } from 'lit-element';
+import {
+  LitElement,
+  customElement,
+  property,
+  CSSResult,
+  css,
+  TemplateResult,
+  html,
+  internalProperty,
+} from 'lit-element';
 import { Part } from '../constants/parts';
 
 function parseColor(color: string) {
@@ -55,8 +64,16 @@ export class EmblemPreview extends LitElement {
 
   static get styles(): CSSResult {
     return css`
-      canvas {
+      .container {
+        position: relative;
         background: black;
+        height: 100%;
+      }
+
+      canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
         width: 100%;
         height: 100%;
       }
@@ -71,16 +88,97 @@ export class EmblemPreview extends LitElement {
 
   render(): TemplateResult {
     return html`
-      <canvas
-        id="canvas"
-        width=${this.width}
-        height=${this.height}>
-      </canvas>
+      <div class="container">
+        <canvas id="back-canvas" width=${this.width} height=${this.height}>
+        </canvas>
+        <canvas id="front-canvas" width=${this.width} height=${this.height}>
+        </canvas>
+        <canvas id="word1-canvas" width=${this.width} height=${this.height}>
+        </canvas>
+        <canvas id="word2-canvas" width=${this.width} height=${this.height}>
+        </canvas>
+      </div>
     `;
   }
 
-  async updated() {
-    const canvas = this.shadowRoot?.getElementById('canvas');
+  async updated(changedProperties: Map<string, object>) {
+    if (this.backHasChanged(changedProperties)) {
+      this.drawImage(
+        'back-canvas',
+        this.backChoice,
+        this.backPrimaryColor,
+        this.backSecondaryColor
+      );
+    }
+    if (this.frontHasChanged(changedProperties)) {
+      this.drawImage(
+        'front-canvas',
+        this.frontChoice,
+        this.frontPrimaryColor,
+        this.frontSecondaryColor
+      );
+    }
+    if (this.word1HasChanged(changedProperties)) {
+      this.drawImage(
+        'word1-canvas',
+        this.word1Choice,
+        this.word1PrimaryColor,
+        this.word1SecondaryColor
+      );
+    }
+    if (this.word2HasChanged(changedProperties)) {
+      this.drawImage(
+        'word2-canvas',
+        this.word2Choice,
+        this.word2PrimaryColor,
+        this.word2SecondaryColor
+      );
+    }
+  }
+
+  private backHasChanged(changedProperties: Map<string, object>) {
+    return (
+      changedProperties.has('backChoice') ||
+      changedProperties.has('backPrimaryColor') ||
+      changedProperties.has('backSecondaryColor')
+    );
+  }
+
+  private frontHasChanged(changedProperties: Map<string, object>) {
+    return (
+      changedProperties.has('frontChoice') ||
+      changedProperties.has('frontPrimaryColor') ||
+      changedProperties.has('frontSecondaryColor')
+    );
+  }
+
+  private word1HasChanged(changedProperties: Map<string, object>) {
+    return (
+      changedProperties.has('word1Choice') ||
+      changedProperties.has('word1PrimaryColor') ||
+      changedProperties.has('word1SecondaryColor')
+    );
+  }
+
+  private word2HasChanged(changedProperties: Map<string, object>) {
+    return (
+      changedProperties.has('word2Choice') ||
+      changedProperties.has('word2PrimaryColor') ||
+      changedProperties.has('word2SecondaryColor')
+    );
+  }
+
+  private async drawImage(
+    canvasId: string,
+    part?: Part,
+    primaryColor?: string,
+    secondaryColor?: string
+  ): Promise<void> {
+    if (!this.width || !this.height || !part) {
+      return;
+    }
+
+    const canvas = this.shadowRoot?.getElementById(canvasId);
     if (!canvas || !(canvas instanceof HTMLCanvasElement)) {
       return;
     }
@@ -90,59 +188,36 @@ export class EmblemPreview extends LitElement {
       return;
     }
 
-    context.clearRect(0, 0, canvas.width, canvas.height);
+    const image = document.createElement('img');
+    image.src = part.path;
 
-    const backCanvas = await this.drawImage(this.backChoice, this.backPrimaryColor, this.backSecondaryColor);
-    if (backCanvas) {
-      context.drawImage(backCanvas, 0, 0, canvas.width, canvas.height);
-    }
-
-    const frontCanvas = await this.drawImage(this.frontChoice, this.frontPrimaryColor, this.frontSecondaryColor);
-    if (frontCanvas) {
-      context.drawImage(frontCanvas, 0, 0, canvas.width, canvas.height);
-    }
-
-    const word1Canvas = await this.drawImage(this.word1Choice, this.word1PrimaryColor, this.word1SecondaryColor);
-    if (word1Canvas) {
-      context.drawImage(word1Canvas, 0, 0, canvas.width, canvas.height);
-    }
-
-    const word2Canvas = await this.drawImage(this.word2Choice, this.word2PrimaryColor, this.word2SecondaryColor);
-    if (word2Canvas) {
-      context.drawImage(word2Canvas, 0, 0, canvas.width, canvas.height);
-    }
-  }
-
-  private drawImage(part: Part | undefined, primaryColor: string | undefined, secondaryColor: string | undefined): Promise<HTMLCanvasElement | undefined> {
     return new Promise(resolve => {
-      if (!this.width || !this.height) {
-        resolve();
-        return;
-      }
-      
-      const scale = 1;
-      const canvas = document.createElement('canvas');    
-      canvas.width = Math.floor(this.width) * scale;
-      canvas.height = Math.floor(this.height) * scale;
-      const context = canvas.getContext('2d');
-      if (!context || !part) {
-        resolve();
-        return;
-      }
-      context.imageSmoothingQuality = 'high';
-
-      const image = document.createElement('img');
-      image.src = part.path;
-
+      context.clearRect(
+        0,
+        0,
+        Math.floor(canvas.width),
+        Math.floor(canvas.height)
+      );
       image.onload = () => {
         const imageSize = Math.min(canvas.width, canvas.height);
         const x = Math.max(0, (canvas.width - canvas.height) / 2);
         const y = Math.max(0, (canvas.height - canvas.width) / 2);
-        context.drawImage(image, Math.floor(x), Math.floor(y), Math.floor(imageSize), Math.floor(imageSize));
-        const imageData = context.getImageData(0, 0, Math.floor(canvas.width), Math.floor(canvas.height));
+        context.drawImage(
+          image,
+          Math.floor(x),
+          Math.floor(y),
+          Math.floor(imageSize),
+          Math.floor(imageSize)
+        );
+        const imageData = context.getImageData(
+          0,
+          0,
+          Math.floor(canvas.width),
+          Math.floor(canvas.height)
+        );
         for (let row = 0; row < canvas.height; row++) {
           for (let col = 0; col < canvas.width; col++) {
-            const index = (row * Math.floor(canvas.width) * 4) + (col * 4);
+            const index = row * Math.floor(canvas.width) * 4 + col * 4;
             const r = imageData.data[index];
             const g = imageData.data[index + 1];
             const b = imageData.data[index + 2];
@@ -160,14 +235,14 @@ export class EmblemPreview extends LitElement {
           }
         }
         context.putImageData(imageData, 0, 0);
-        resolve(canvas);
+        resolve();
       };
     });
   }
 
   private updateWidthAndHeight() {
     const { width, height } = this.getBoundingClientRect();
-    this.width = width;
-    this.height = height;
+    this.width = Math.floor(width);
+    this.height = Math.floor(height);
   }
 }

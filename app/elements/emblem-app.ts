@@ -1,6 +1,21 @@
-import {LitElement, html, customElement, property, TemplateResult, CSSResult, css, internalProperty} from 'lit-element';
+import {
+  LitElement,
+  html,
+  customElement,
+  property,
+  TemplateResult,
+  CSSResult,
+  css,
+  internalProperty,
+} from 'lit-element';
 import { PartsStore, PartsState } from '../stores/parts-store';
-import { Part, backGroupTypes, PartGroupType, frontGroupTypes, wordGroupTypes } from '../constants/parts';
+import {
+  Part,
+  backGroupTypes,
+  PartGroupType,
+  frontGroupTypes,
+  wordGroupTypes,
+} from '../constants/parts';
 import { ColorsStore, ColorsState } from '../stores/colors-store';
 import { Tab } from './emblem-tabs';
 import { Tab as ColorTab } from './emblem-color-menu';
@@ -39,7 +54,7 @@ export class EmblemApp extends LitElement {
 
   @internalProperty()
   private primaryColorTab = ColorTab.MAIN;
-  
+
   @internalProperty()
   private secondaryColorTab = ColorTab.MAIN;
 
@@ -120,12 +135,11 @@ export class EmblemApp extends LitElement {
           .word1SecondaryColor=${this.editorState?.word1SecondaryColor}
           .word2Choice=${this.getWord2Choice()}
           .word2PrimaryColor=${this.editorState?.word2PrimaryColor}
-          .word2SecondaryColor=${this.editorState?.word2SecondaryColor}>
+          .word2SecondaryColor=${this.editorState?.word2SecondaryColor}
+        >
         </emblem-preview>
         <div class="menu">
-          ${this.renderTabs()}
-          ${this.renderColors()}
-          ${this.renderParts()}
+          ${this.renderTabs()} ${this.renderColors()} ${this.renderParts()}
         </div>
       </div>
     `;
@@ -151,7 +165,9 @@ export class EmblemApp extends LitElement {
     return html`
       <emblem-tabs
         .tab=${this.tab}
-        @tab-change=${(event: CustomEvent) => this.handleTabChange(event.detail.tab)}>
+        @tab-change=${(event: CustomEvent) =>
+          this.handleTabChange(event.detail.tab)}
+      >
       </emblem-tabs>
     `;
   }
@@ -168,15 +184,21 @@ export class EmblemApp extends LitElement {
           .tab=${this.primaryColorTab}
           .colorsState=${this.colorsState}
           .selection=${this.getPrimaryColorSelection()}
-          @tab-change=${(event: CustomEvent) => this.primaryColorTab = event.detail.tab}
-          @select=${(event: CustomEvent) => this.handlePrimaryColorSelection(event)}>
+          @tab-change=${(event: CustomEvent) =>
+            (this.primaryColorTab = event.detail.tab)}
+          @select=${(event: CustomEvent) =>
+            this.handlePrimaryColorSelection(event)}
+        >
         </emblem-color-menu>
         <emblem-color-menu
           .tab=${this.secondaryColorTab}
           .colorsState=${this.colorsState}
           .selection=${this.getSecondaryColorSelection()}
-          @tab-change=${(event: CustomEvent) => this.secondaryColorTab = event.detail.tab}
-          @select=${(event: CustomEvent) => this.handleSecondaryColorSelection(event)}>
+          @tab-change=${(event: CustomEvent) =>
+            (this.secondaryColorTab = event.detail.tab)}
+          @select=${(event: CustomEvent) =>
+            this.handleSecondaryColorSelection(event)}
+        >
         </emblem-color-menu>
       </div>
     `;
@@ -193,7 +215,8 @@ export class EmblemApp extends LitElement {
           .selectedGroup=${this.group}
           .selection=${this.getPartSelection()}
           @group-change=${(event: CustomEvent) => this.handleGroupChange(event)}
-          @select=${(event: CustomEvent) => this.handlePartSelection(event)}>
+          @select=${(event: CustomEvent) => this.handlePartSelection(event)}
+        >
         </emblem-image-menu>
       `;
     } else {
@@ -204,7 +227,8 @@ export class EmblemApp extends LitElement {
           .selectedGroup=${this.group}
           .selection=${this.getPartSelection()}
           @group-change=${(event: CustomEvent) => this.handleGroupChange(event)}
-          @select=${(event: CustomEvent) => this.handlePartSelection(event)}>
+          @select=${(event: CustomEvent) => this.handlePartSelection(event)}
+        >
         </emblem-word-menu>
       `;
     }
@@ -254,13 +278,19 @@ export class EmblemApp extends LitElement {
         this.editorStore.update({ backSecondaryColor: event.detail.selection });
         break;
       case Tab.FRONT:
-        this.editorStore.update({ frontSecondaryColor: event.detail.selection });
+        this.editorStore.update({
+          frontSecondaryColor: event.detail.selection,
+        });
         break;
       case Tab.WORD_1:
-        this.editorStore.update({ word1SecondaryColor: event.detail.selection });
+        this.editorStore.update({
+          word1SecondaryColor: event.detail.selection,
+        });
         break;
       case Tab.WORD_2:
-        this.editorStore.update({ word2SecondaryColor: event.detail.selection });
+        this.editorStore.update({
+          word2SecondaryColor: event.detail.selection,
+        });
         break;
     }
   }
@@ -325,7 +355,7 @@ export class EmblemApp extends LitElement {
         result[key] = parts[key];
       }
     }
-    
+
     return result;
   }
 
