@@ -75,27 +75,40 @@ export class EmblemApp extends LitElement {
     return css`
       .container {
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
         height: 100%;
+      }
+
+      @media only screen and (min-width: 600px) {
+        .container {
+          flex-direction: row;
+        }
       }
 
       .menu {
         flex: 6;
         height: 100%;
         background: lightgray;
-        overflow: auto;
-        padding: 1rem;
+        overflow-x: hidden;
         box-sizing: border-box;
       }
 
-      emblem-tabs {
-        margin-bottom: 4rem;
+      .tabs-container {
+        overflow-x: auto;
+        margin-bottom: 2rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
       }
 
       .colors {
         display: flex;
-        flex-direction: row;
-        margin-bottom: 4rem;
+        flex-direction: column;
+        margin-bottom: 2rem;
+      }
+
+      @media only screen and (min-width: 600px) {
+        .colors {
+          flex-direction: row;
+        }        
       }
 
       emblem-color-menu {
@@ -103,7 +116,14 @@ export class EmblemApp extends LitElement {
       }
 
       emblem-color-menu:not(:first-child) {
-        margin-inline-start: 1rem;
+        margin-top: 2rem;
+      }
+
+      @media only screen and (min-width: 600px) {
+        emblem-color-menu:not(:first-child) {
+          margin-top: 0;
+          margin-left: 2rem;
+        }
       }
 
       emblem-preview {
@@ -163,12 +183,14 @@ export class EmblemApp extends LitElement {
 
   private renderTabs(): TemplateResult {
     return html`
+      <div class="tabs-container">
       <emblem-tabs
         .tab=${this.tab}
         @tab-change=${(event: CustomEvent) =>
           this.handleTabChange(event.detail.tab)}
       >
       </emblem-tabs>
+      </div>
     `;
   }
 

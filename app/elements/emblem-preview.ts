@@ -140,7 +140,9 @@ export class EmblemPreview extends LitElement {
     return (
       changedProperties.has('backChoice') ||
       changedProperties.has('backPrimaryColor') ||
-      changedProperties.has('backSecondaryColor')
+      changedProperties.has('backSecondaryColor') ||
+      changedProperties.has('width') ||
+      changedProperties.has('height')
     );
   }
 
@@ -148,7 +150,9 @@ export class EmblemPreview extends LitElement {
     return (
       changedProperties.has('frontChoice') ||
       changedProperties.has('frontPrimaryColor') ||
-      changedProperties.has('frontSecondaryColor')
+      changedProperties.has('frontSecondaryColor') ||
+      changedProperties.has('width') ||
+      changedProperties.has('height')
     );
   }
 
@@ -156,7 +160,9 @@ export class EmblemPreview extends LitElement {
     return (
       changedProperties.has('word1Choice') ||
       changedProperties.has('word1PrimaryColor') ||
-      changedProperties.has('word1SecondaryColor')
+      changedProperties.has('word1SecondaryColor') ||
+      changedProperties.has('width') ||
+      changedProperties.has('height')
     );
   }
 
@@ -164,7 +170,9 @@ export class EmblemPreview extends LitElement {
     return (
       changedProperties.has('word2Choice') ||
       changedProperties.has('word2PrimaryColor') ||
-      changedProperties.has('word2SecondaryColor')
+      changedProperties.has('word2SecondaryColor') ||
+      changedProperties.has('width') ||
+      changedProperties.has('height')
     );
   }
 

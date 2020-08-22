@@ -38,11 +38,13 @@ export class EmblemColorMenu extends LitElement {
         display: flex;
         flex-direction: column;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+        overflow-x: hidden;
       }
 
       .tabs {
         display: flex;
         flex-direction: row;
+        overflow-x: auto;
       }
 
       .tab {
@@ -52,8 +54,13 @@ export class EmblemColorMenu extends LitElement {
 
       .colors {
         flex: 1;
-        padding: 2rem;
         background: #eee;
+      }
+
+      @media only screen and (min-width: 1000px) {
+        .colors {
+          padding: 2rem;
+        }
       }
 
       .row {

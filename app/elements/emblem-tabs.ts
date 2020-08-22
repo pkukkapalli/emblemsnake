@@ -43,12 +43,12 @@ export class EmblemTabs extends LitElement {
       .container {
         display: flex;
         flex-direction: row;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
       }
 
       .tab {
         display: inline-block;
         flex: 1;
+        min-width: 8rem;
       }
     `;
   }

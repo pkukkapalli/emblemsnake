@@ -45,21 +45,32 @@ export class EmblemImageMenu extends LitElement {
 
       .images {
         flex: 1;
-        padding: 2rem;
         background: #eee;
         display: flex;
         flex-wrap: wrap;
       }
 
+      @media only screen and (min-width: 1000px) {
+        .images {
+          padding: 2rem;
+        }
+      }
+
       .image-container {
         display: inline-block;
         position: relative;
-        width: calc(100% / 8);
+        width: calc(100% / 4);
         cursor: pointer;
         box-sizing: border-box;
         border: 3px solid transparent;
         transition: border 200ms ease-in;
         z-index: 1;
+      }
+
+      @media only screen and (min-width: 600px) {
+        .image-container {
+          width: calc(100% / 6);
+        }
       }
 
       .image-container:hover {
