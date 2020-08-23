@@ -27,8 +27,8 @@ import { EditorState, EditorStore } from '../stores/editor-store';
 const defaultGroupForTab = new Map([
   [Tab.BACK, PartGroupType.BACK_NORMAL],
   [Tab.FRONT, PartGroupType.FRONT_NORMAL],
-  [Tab.WORD_1, PartGroupType.WORD_NUMBER],
-  [Tab.WORD_2, PartGroupType.WORD_NUMBER],
+  [Tab.WORD_1, PartGroupType.WORD_NORMAL],
+  [Tab.WORD_2, PartGroupType.WORD_NORMAL],
 ]);
 
 @customElement('emblem-app')
@@ -108,7 +108,7 @@ export class EmblemApp extends LitElement {
       @media only screen and (min-width: 600px) {
         .colors {
           flex-direction: row;
-        }        
+        }
       }
 
       emblem-color-menu {
@@ -184,12 +184,12 @@ export class EmblemApp extends LitElement {
   private renderTabs(): TemplateResult {
     return html`
       <div class="tabs-container">
-      <emblem-tabs
-        .tab=${this.tab}
-        @tab-change=${(event: CustomEvent) =>
-          this.handleTabChange(event.detail.tab)}
-      >
-      </emblem-tabs>
+        <emblem-tabs
+          .tab=${this.tab}
+          @tab-change=${(event: CustomEvent) =>
+            this.handleTabChange(event.detail.tab)}
+        >
+        </emblem-tabs>
       </div>
     `;
   }

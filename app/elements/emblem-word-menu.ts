@@ -31,16 +31,19 @@ export class EmblemWordMenu extends LitElement {
         display: flex;
         flex-direction: column;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+        overflow: hidden;
       }
 
       .tabs {
         display: flex;
         flex-direction: row;
+        overflow-x: auto;
       }
 
       .tab {
         flex: 1;
         height: 3rem;
+        min-width: 8rem;
       }
 
       .words {
@@ -54,13 +57,25 @@ export class EmblemWordMenu extends LitElement {
       .word-container {
         display: inline-block;
         position: relative;
-        width: 100%;
+        width: 50%;
         height: 3rem;
         cursor: pointer;
         box-sizing: border-box;
         border: 3px solid transparent;
         transition: border 200ms ease-in;
         z-index: 1;
+      }
+
+      @media only screen and (min-width: 600px) {
+        .word-container {
+          width: calc(100% / 3);
+        }
+      }
+
+      @media only screen and (min-width: 1000px) {
+        .word-container {
+          width: 20%;
+        }
       }
 
       .word-container:hover {

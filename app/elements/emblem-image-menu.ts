@@ -35,7 +35,7 @@ export class EmblemImageMenu extends LitElement {
 
       .tabs {
         display: flex;
-        flex-direction: riw;
+        flex-direction: row;
       }
 
       .tab {

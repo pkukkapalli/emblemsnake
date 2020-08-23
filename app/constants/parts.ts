@@ -12,11 +12,11 @@ export enum PartGroupType {
   FRONT_ANIMALS = 'FRONT_ANIMALS',
   FRONT_CODENAMES = 'FRONT_CODENAMES',
   FRONT_SPECIAL = 'FRONT_SPECIAL',
-  WORD_NUMBER = 'WORD_NUMBER',
-  WORD_LETTER = 'WORD_LETTER',
   WORD_NORMAL = 'WORD_NORMAL',
   WORD_PHONETIC = 'WORD_PHONETIC',
   WORD_CODENAMES = 'WORD_CODENAMES',
+  WORD_NUMBER = 'WORD_NUMBER',
+  WORD_LETTER = 'WORD_LETTER',
 }
 
 export const groupTypeDisplayNames = new Map([
@@ -46,9 +46,9 @@ export const frontGroupTypes = new Set([
 ]);
 
 export const wordGroupTypes = new Set([
-  PartGroupType.WORD_NUMBER,
-  PartGroupType.WORD_LETTER,
   PartGroupType.WORD_NORMAL,
   PartGroupType.WORD_PHONETIC,
   PartGroupType.WORD_CODENAMES,
+  PartGroupType.WORD_NUMBER,
+  PartGroupType.WORD_LETTER,
 ]);

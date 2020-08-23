@@ -68,6 +68,7 @@ export class EmblemPreview extends LitElement {
         position: relative;
         background: black;
         height: 100%;
+        box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
       }
 
       canvas {
