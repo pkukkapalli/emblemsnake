@@ -150,21 +150,29 @@ export class EmblemApp extends LitElement {
           .backSecondaryColor=${this.editorState?.backSecondaryColor}
           .backPosition=${this.editorState?.backPosition}
           @move-back=${(event: CustomEvent) => this.handleMoveBack(event)}
+          .backScale=${this.editorState?.backScale}
+          @scale-back=${(event: CustomEvent) => this.handleScaleBack(event)}
           .frontChoice=${this.getFrontChoice()}
           .frontPrimaryColor=${this.editorState?.frontPrimaryColor}
           .frontSecondaryColor=${this.editorState?.frontSecondaryColor}
           .frontPosition=${this.editorState?.frontPosition}
           @move-front=${(event: CustomEvent) => this.handleMoveFront(event)}
+          .frontScale=${this.editorState?.frontScale}
+          @scale-front=${(event: CustomEvent) => this.handleScaleFront(event)}
           .word1Choice=${this.getWord1Choice()}
           .word1PrimaryColor=${this.editorState?.word1PrimaryColor}
           .word1SecondaryColor=${this.editorState?.word1SecondaryColor}
           .word1Position=${this.editorState?.word1Position}
           @move-word1=${(event: CustomEvent) => this.handleMoveWord1(event)}
+          .word1Scale=${this.editorState?.word1Scale}
+          @scale-word1=${(event: CustomEvent) => this.handleScaleWord1(event)}
           .word2Choice=${this.getWord2Choice()}
           .word2PrimaryColor=${this.editorState?.word2PrimaryColor}
           .word2SecondaryColor=${this.editorState?.word2SecondaryColor}
           .word2Position=${this.editorState?.word2Position}
           @move-word2=${(event: CustomEvent) => this.handleMoveWord2(event)}
+          .word2Scale=${this.editorState?.word2Scale}
+          @scale-word2=${(event: CustomEvent) => this.handleScaleWord2(event)}
         >
         </emblem-preview>
         <div class="menu">
@@ -330,16 +338,32 @@ export class EmblemApp extends LitElement {
     this.editorStore.update({ backPosition: event.detail });
   }
 
+  private handleScaleBack(event: CustomEvent) {
+    this.editorStore.update({ backScale: event.detail.scale });
+  }
+
   private handleMoveFront(event: CustomEvent) {
     this.editorStore.update({ frontPosition: event.detail });
+  }
+
+  private handleScaleFront(event: CustomEvent) {
+    this.editorStore.update({ frontScale: event.detail.scale });
   }
 
   private handleMoveWord1(event: CustomEvent) {
     this.editorStore.update({ word1Position: event.detail });
   }
 
+  private handleScaleWord1(event: CustomEvent) {
+    this.editorStore.update({ word1Scale: event.detail.scale });
+  }
+
   private handleMoveWord2(event: CustomEvent) {
     this.editorStore.update({ word2Position: event.detail });
+  }
+
+  private handleScaleWord2(event: CustomEvent) {
+    this.editorStore.update({ word2Scale: event.detail.scale });
   }
 
   private getPartSelection(): string {

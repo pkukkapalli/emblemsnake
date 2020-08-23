@@ -4,22 +4,33 @@ export interface PartPosition {
 }
 
 export interface EditorState {
+  // Back state
   backChoice?: string;
   backPrimaryColor?: string;
   backSecondaryColor?: string;
   backPosition?: PartPosition;
+  backScale?: number;
+
+  // Front state
   frontChoice?: string;
   frontPrimaryColor?: string;
   frontSecondaryColor?: string;
   frontPosition?: PartPosition;
+  frontScale?: number;
+
+  // Word 1
   word1Choice?: string;
   word1PrimaryColor?: string;
   word1SecondaryColor?: string;
   word1Position?: PartPosition;
+  word1Scale?: number;
+
+  // Word 2
   word2Choice?: string;
   word2PrimaryColor?: string;
   word2SecondaryColor?: string;
   word2Position?: PartPosition;
+  word2Scale?: number;
 }
 
 type EditorStateListener = (state: EditorState) => void;

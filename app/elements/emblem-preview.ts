@@ -13,8 +13,9 @@ import { Tab } from './emblem-tabs';
 import { styleMap } from 'lit-html/directives/style-map';
 import { PartPosition } from '../stores/editor-store';
 
-const STANDARD_DIFF = 5;
+const STANDARD_POSITION_DIFF = 5;
 const DEFAULT_POSITION = { x: 0, y: 0 };
+const STANDARD_SCALE_DIFF = 0.1;
 
 function parseColor(color: string) {
   return {
@@ -31,55 +32,50 @@ export class EmblemPreview extends LitElement {
 
   @property()
   backChoice?: Part;
-
   @property()
   backPrimaryColor?: string;
-
   @property()
   backSecondaryColor?: string;
-
   @property()
   backPosition?: PartPosition;
+  @property()
+  backScale?: number;
 
   @property()
   frontChoice?: Part;
-
   @property()
   frontPrimaryColor?: string;
-
   @property()
   frontSecondaryColor?: string;
-
   @property()
   frontPosition?: PartPosition;
+  @property()
+  frontScale?: number;
 
   @property()
   word1Choice?: Part;
-
   @property()
   word1PrimaryColor?: string;
-
   @property()
   word1SecondaryColor?: string;
-
   @property()
   word1Position?: PartPosition;
+  @property()
+  word1Scale?: number;
 
   @property()
   word2Choice?: Part;
-
   @property()
   word2PrimaryColor?: string;
-
   @property()
   word2SecondaryColor?: string;
-
   @property()
   word2Position?: PartPosition;
+  @property()
+  word2Scale?: number;
 
   @internalProperty()
   width?: number;
-
   @internalProperty()
   height?: number;
 
@@ -126,22 +122,42 @@ export class EmblemPreview extends LitElement {
   render(): TemplateResult {
     return html`
       <div class="container" id="container" tabindex="0">
-        ${this.renderCanvasElement('back-canvas', this.backPosition)}
-        ${this.renderCanvasElement('front-canvas', this.frontPosition)}
-        ${this.renderCanvasElement('word1-canvas', this.word1Position)}
-        ${this.renderCanvasElement('word2-canvas', this.word2Position)}
+        ${this.renderCanvasElement(
+          'back-canvas',
+          this.backPosition,
+          this.backScale
+        )}
+        ${this.renderCanvasElement(
+          'front-canvas',
+          this.frontPosition,
+          this.frontScale
+        )}
+        ${this.renderCanvasElement(
+          'word1-canvas',
+          this.word1Position,
+          this.word1Scale
+        )}
+        ${this.renderCanvasElement(
+          'word2-canvas',
+          this.word2Position,
+          this.word2Scale
+        )}
       </div>
     `;
   }
 
-  private renderCanvasElement(id: string, position = { x: 0, y: 0 }) {
+  private renderCanvasElement(
+    id: string,
+    position = { x: 0, y: 0 },
+    scale = 1
+  ) {
     return html`
       <canvas
         id=${id}
         width=${this.width}
         height=${this.height}
         style=${styleMap({
-          transform: `translate(${position.x}%, ${position.y}%)`,
+          transform: `translate(${position.x}%, ${position.y}%) scale(${scale})`,
         })}
       >
       </canvas>
@@ -302,19 +318,27 @@ export class EmblemPreview extends LitElement {
   }
 
   private handleKeyboard(event: KeyboardEvent) {
+    if (event.ctrlKey) {
+      this.handleScaling(event);
+    } else {
+      this.handleMoving(event);
+    }
+  }
+
+  private handleMoving(event: KeyboardEvent) {
     const diff = { x: 0, y: 0 };
     switch (event.key) {
       case 'ArrowLeft':
-        diff.x = -STANDARD_DIFF;
+        diff.x = -STANDARD_POSITION_DIFF;
         break;
       case 'ArrowRight':
-        diff.x = STANDARD_DIFF;
+        diff.x = STANDARD_POSITION_DIFF;
         break;
       case 'ArrowUp':
-        diff.y = -STANDARD_DIFF;
+        diff.y = -STANDARD_POSITION_DIFF;
         break;
       case 'ArrowDown':
-        diff.y = STANDARD_DIFF;
+        diff.y = STANDARD_POSITION_DIFF;
         break;
     }
 
@@ -361,5 +385,48 @@ export class EmblemPreview extends LitElement {
 
   private applyDiff(position: PartPosition, diff: PartPosition) {
     return { x: position.x + diff.x, y: position.y + diff.y };
+  }
+
+  private handleScaling(event: KeyboardEvent) {
+    let diff = 0;
+    switch (event.key) {
+      case 'ArrowUp':
+        diff += STANDARD_SCALE_DIFF;
+        break;
+      case 'ArrowDown':
+        diff -= STANDARD_SCALE_DIFF;
+        break;
+    }
+
+    switch (this.tab) {
+      case Tab.BACK:
+        this.dispatchEvent(
+          new CustomEvent('scale-back', {
+            detail: { scale: (this.backScale || 1) + diff },
+          })
+        );
+        break;
+      case Tab.FRONT:
+        this.dispatchEvent(
+          new CustomEvent('scale-front', {
+            detail: { scale: (this.frontScale || 1) + diff },
+          })
+        );
+        break;
+      case Tab.WORD_1:
+        this.dispatchEvent(
+          new CustomEvent('scale-word1', {
+            detail: { scale: (this.word1Scale || 1) + diff },
+          })
+        );
+        break;
+      case Tab.WORD_2:
+        this.dispatchEvent(
+          new CustomEvent('scale-word2', {
+            detail: { scale: (this.word2Scale || 1) + diff },
+          })
+        );
+        break;
+    }
   }
 }
