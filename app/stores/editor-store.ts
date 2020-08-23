@@ -1,16 +1,25 @@
+export interface PartPosition {
+  x: number;
+  y: number;
+}
+
 export interface EditorState {
   backChoice?: string;
   backPrimaryColor?: string;
   backSecondaryColor?: string;
+  backPosition?: PartPosition;
   frontChoice?: string;
   frontPrimaryColor?: string;
   frontSecondaryColor?: string;
+  frontPosition?: PartPosition;
   word1Choice?: string;
   word1PrimaryColor?: string;
   word1SecondaryColor?: string;
+  word1Position?: PartPosition;
   word2Choice?: string;
   word2PrimaryColor?: string;
   word2SecondaryColor?: string;
+  word2Position?: PartPosition;
 }
 
 type EditorStateListener = (state: EditorState) => void;

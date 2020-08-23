@@ -144,18 +144,27 @@ export class EmblemApp extends LitElement {
     return html`
       <div class="container">
         <emblem-preview
+          .tab=${this.tab}
           .backChoice=${this.getBackChoice()}
           .backPrimaryColor=${this.editorState?.backPrimaryColor}
           .backSecondaryColor=${this.editorState?.backSecondaryColor}
+          .backPosition=${this.editorState?.backPosition}
+          @move-back=${(event: CustomEvent) => this.handleMoveBack(event)}
           .frontChoice=${this.getFrontChoice()}
           .frontPrimaryColor=${this.editorState?.frontPrimaryColor}
           .frontSecondaryColor=${this.editorState?.frontSecondaryColor}
+          .frontPosition=${this.editorState?.frontPosition}
+          @move-front=${(event: CustomEvent) => this.handleMoveFront(event)}
           .word1Choice=${this.getWord1Choice()}
           .word1PrimaryColor=${this.editorState?.word1PrimaryColor}
           .word1SecondaryColor=${this.editorState?.word1SecondaryColor}
+          .word1Position=${this.editorState?.word1Position}
+          @move-word1=${(event: CustomEvent) => this.handleMoveWord1(event)}
           .word2Choice=${this.getWord2Choice()}
           .word2PrimaryColor=${this.editorState?.word2PrimaryColor}
           .word2SecondaryColor=${this.editorState?.word2SecondaryColor}
+          .word2Position=${this.editorState?.word2Position}
+          @move-word2=${(event: CustomEvent) => this.handleMoveWord2(event)}
         >
         </emblem-preview>
         <div class="menu">
@@ -315,6 +324,22 @@ export class EmblemApp extends LitElement {
         });
         break;
     }
+  }
+
+  private handleMoveBack(event: CustomEvent) {
+    this.editorStore.update({ backPosition: event.detail });
+  }
+
+  private handleMoveFront(event: CustomEvent) {
+    this.editorStore.update({ frontPosition: event.detail });
+  }
+
+  private handleMoveWord1(event: CustomEvent) {
+    this.editorStore.update({ word1Position: event.detail });
+  }
+
+  private handleMoveWord2(event: CustomEvent) {
+    this.editorStore.update({ word2Position: event.detail });
   }
 
   private getPartSelection(): string {

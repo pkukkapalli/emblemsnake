@@ -9,6 +9,12 @@ import {
   internalProperty,
 } from 'lit-element';
 import { Part } from '../constants/parts';
+import { Tab } from './emblem-tabs';
+import { styleMap } from 'lit-html/directives/style-map';
+import { PartPosition } from '../stores/editor-store';
+
+const STANDARD_DIFF = 5;
+const DEFAULT_POSITION = { x: 0, y: 0 };
 
 function parseColor(color: string) {
   return {
@@ -21,6 +27,9 @@ function parseColor(color: string) {
 @customElement('emblem-preview')
 export class EmblemPreview extends LitElement {
   @property()
+  tab?: Tab;
+
+  @property()
   backChoice?: Part;
 
   @property()
@@ -28,6 +37,9 @@ export class EmblemPreview extends LitElement {
 
   @property()
   backSecondaryColor?: string;
+
+  @property()
+  backPosition?: PartPosition;
 
   @property()
   frontChoice?: Part;
@@ -39,6 +51,9 @@ export class EmblemPreview extends LitElement {
   frontSecondaryColor?: string;
 
   @property()
+  frontPosition?: PartPosition;
+
+  @property()
   word1Choice?: Part;
 
   @property()
@@ -48,6 +63,9 @@ export class EmblemPreview extends LitElement {
   word1SecondaryColor?: string;
 
   @property()
+  word1Position?: PartPosition;
+
+  @property()
   word2Choice?: Part;
 
   @property()
@@ -55,6 +73,9 @@ export class EmblemPreview extends LitElement {
 
   @property()
   word2SecondaryColor?: string;
+
+  @property()
+  word2Position?: PartPosition;
 
   @internalProperty()
   width?: number;
@@ -68,7 +89,12 @@ export class EmblemPreview extends LitElement {
         position: relative;
         background: black;
         height: 100%;
-        box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+        box-sizing: border-box;
+        box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25),
+          0 10px 10px rgba(0, 0, 0, 0.22);
+        overflow: hidden;
+        border: 3px solid transparent;
+        transition: all 200ms ease-in;
       }
 
       canvas {
@@ -85,20 +111,40 @@ export class EmblemPreview extends LitElement {
     super.connectedCallback();
     this.updateWidthAndHeight();
     window.addEventListener('resize', () => this.updateWidthAndHeight());
+    window.addEventListener('keydown', (event: KeyboardEvent) => {
+      if (
+        this.shadowRoot?.activeElement !==
+        this.shadowRoot?.getElementById('container')
+      ) {
+        return;
+      }
+      event.preventDefault();
+      this.handleKeyboard(event);
+    });
   }
 
   render(): TemplateResult {
     return html`
-      <div class="container">
-        <canvas id="back-canvas" width=${this.width} height=${this.height}>
-        </canvas>
-        <canvas id="front-canvas" width=${this.width} height=${this.height}>
-        </canvas>
-        <canvas id="word1-canvas" width=${this.width} height=${this.height}>
-        </canvas>
-        <canvas id="word2-canvas" width=${this.width} height=${this.height}>
-        </canvas>
+      <div class="container" id="container" tabindex="0">
+        ${this.renderCanvasElement('back-canvas', this.backPosition)}
+        ${this.renderCanvasElement('front-canvas', this.frontPosition)}
+        ${this.renderCanvasElement('word1-canvas', this.word1Position)}
+        ${this.renderCanvasElement('word2-canvas', this.word2Position)}
       </div>
+    `;
+  }
+
+  private renderCanvasElement(id: string, position = { x: 0, y: 0 }) {
+    return html`
+      <canvas
+        id=${id}
+        width=${this.width}
+        height=${this.height}
+        style=${styleMap({
+          transform: `translate(${position.x}%, ${position.y}%)`,
+        })}
+      >
+      </canvas>
     `;
   }
 
@@ -253,5 +299,67 @@ export class EmblemPreview extends LitElement {
     const { width, height } = this.getBoundingClientRect();
     this.width = Math.floor(width);
     this.height = Math.floor(height);
+  }
+
+  private handleKeyboard(event: KeyboardEvent) {
+    const diff = { x: 0, y: 0 };
+    switch (event.key) {
+      case 'ArrowLeft':
+        diff.x = -STANDARD_DIFF;
+        break;
+      case 'ArrowRight':
+        diff.x = STANDARD_DIFF;
+        break;
+      case 'ArrowUp':
+        diff.y = -STANDARD_DIFF;
+        break;
+      case 'ArrowDown':
+        diff.y = STANDARD_DIFF;
+        break;
+    }
+
+    switch (this.tab) {
+      case Tab.BACK:
+        this.dispatchEvent(
+          new CustomEvent('move-back', {
+            detail: this.applyDiff(this.backPosition || DEFAULT_POSITION, diff),
+          })
+        );
+        break;
+      case Tab.FRONT:
+        this.dispatchEvent(
+          new CustomEvent('move-front', {
+            detail: this.applyDiff(
+              this.frontPosition || DEFAULT_POSITION,
+              diff
+            ),
+          })
+        );
+        break;
+      case Tab.WORD_1:
+        this.dispatchEvent(
+          new CustomEvent('move-word1', {
+            detail: this.applyDiff(
+              this.word1Position || DEFAULT_POSITION,
+              diff
+            ),
+          })
+        );
+        break;
+      case Tab.WORD_2:
+        this.dispatchEvent(
+          new CustomEvent('move-word2', {
+            detail: this.applyDiff(
+              this.word2Position || DEFAULT_POSITION,
+              diff
+            ),
+          })
+        );
+        break;
+    }
+  }
+
+  private applyDiff(position: PartPosition, diff: PartPosition) {
+    return { x: position.x + diff.x, y: position.y + diff.y };
   }
 }
