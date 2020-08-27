@@ -76,6 +76,10 @@ export class EmblemPreview extends LitElement {
 
   static get styles(): CSSResult {
     return css`
+      :host {
+        position: relative;
+      }
+
       .container {
         position: relative;
         background: black;
@@ -143,35 +147,35 @@ export class EmblemPreview extends LitElement {
           this.word2Position,
           this.word2Scale
         )}
-        <emblem-icon-button
-          class="download"
-          @click=${() =>
-            download({
-              backChoice: this.backChoice,
-              backPrimaryColor: this.backPrimaryColor,
-              backSecondaryColor: this.backSecondaryColor,
-              backPosition: this.backPosition,
-              backScale: this.backScale,
-              frontChoice: this.frontChoice,
-              frontPrimaryColor: this.frontPrimaryColor,
-              frontSecondaryColor: this.frontSecondaryColor,
-              frontPosition: this.frontPosition,
-              frontScale: this.frontScale,
-              word1Choice: this.word1Choice,
-              word1PrimaryColor: this.word1PrimaryColor,
-              word1SecondaryColor: this.word1SecondaryColor,
-              word1Position: this.word1Position,
-              word1Scale: this.word1Scale,
-              word2Choice: this.word2Choice,
-              word2PrimaryColor: this.word2PrimaryColor,
-              word2SecondaryColor: this.word2SecondaryColor,
-              word2Position: this.word2Position,
-              word2Scale: this.word2Scale,
-            })}
-        >
-          <img src="/assets/download.svg" />
-        </emblem-icon-button>
       </div>
+      <emblem-icon-button
+        class="download"
+        @click=${() =>
+          download({
+            backChoice: this.backChoice,
+            backPrimaryColor: this.backPrimaryColor,
+            backSecondaryColor: this.backSecondaryColor,
+            backPosition: this.backPosition,
+            backScale: this.backScale,
+            frontChoice: this.frontChoice,
+            frontPrimaryColor: this.frontPrimaryColor,
+            frontSecondaryColor: this.frontSecondaryColor,
+            frontPosition: this.frontPosition,
+            frontScale: this.frontScale,
+            word1Choice: this.word1Choice,
+            word1PrimaryColor: this.word1PrimaryColor,
+            word1SecondaryColor: this.word1SecondaryColor,
+            word1Position: this.word1Position,
+            word1Scale: this.word1Scale,
+            word2Choice: this.word2Choice,
+            word2PrimaryColor: this.word2PrimaryColor,
+            word2SecondaryColor: this.word2SecondaryColor,
+            word2Position: this.word2Position,
+            word2Scale: this.word2Scale,
+          })}
+      >
+        <img src="/assets/download.svg" />
+      </emblem-icon-button>
     `;
   }
 
