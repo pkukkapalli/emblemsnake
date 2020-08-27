@@ -12,18 +12,13 @@ import { Part } from '../constants/parts';
 import { Tab } from './emblem-tabs';
 import { styleMap } from 'lit-html/directives/style-map';
 import { PartPosition } from '../stores/editor-store';
+import { drawPart } from '../services/draw-service';
+import './emblem-icon-button';
+import { download } from '../services/download-service';
 
 const STANDARD_POSITION_DIFF = 5;
 const DEFAULT_POSITION = { x: 0, y: 0 };
 const STANDARD_SCALE_DIFF = 0.1;
-
-function parseColor(color: string) {
-  return {
-    r: Number.parseInt(color.substring(1, 3), 16),
-    g: Number.parseInt(color.substring(3, 5), 16),
-    b: Number.parseInt(color.substring(5, 7), 16),
-  };
-}
 
 @customElement('emblem-preview')
 export class EmblemPreview extends LitElement {
@@ -100,6 +95,12 @@ export class EmblemPreview extends LitElement {
         width: 100%;
         height: 100%;
       }
+
+      .download {
+        position: absolute;
+        right: 1rem;
+        bottom: 1rem;
+      }
     `;
   }
 
@@ -142,6 +143,34 @@ export class EmblemPreview extends LitElement {
           this.word2Position,
           this.word2Scale
         )}
+        <emblem-icon-button
+          class="download"
+          @click=${() =>
+            download({
+              backChoice: this.backChoice,
+              backPrimaryColor: this.backPrimaryColor,
+              backSecondaryColor: this.backSecondaryColor,
+              backPosition: this.backPosition,
+              backScale: this.backScale,
+              frontChoice: this.frontChoice,
+              frontPrimaryColor: this.frontPrimaryColor,
+              frontSecondaryColor: this.frontSecondaryColor,
+              frontPosition: this.frontPosition,
+              frontScale: this.frontScale,
+              word1Choice: this.word1Choice,
+              word1PrimaryColor: this.word1PrimaryColor,
+              word1SecondaryColor: this.word1SecondaryColor,
+              word1Position: this.word1Position,
+              word1Scale: this.word1Scale,
+              word2Choice: this.word2Choice,
+              word2PrimaryColor: this.word2PrimaryColor,
+              word2SecondaryColor: this.word2SecondaryColor,
+              word2Position: this.word2Position,
+              word2Scale: this.word2Scale,
+            })}
+        >
+          <img src="/assets/download.svg" />
+        </emblem-icon-button>
       </div>
     `;
   }
@@ -151,13 +180,16 @@ export class EmblemPreview extends LitElement {
     position = { x: 0, y: 0 },
     scale = 1
   ) {
+    const canvasSize = Math.min(this.width || 0, this.height || 0);
+    const absoluteX = (position.x / 100) * canvasSize;
+    const absoluteY = (position.y / 100) * canvasSize;
     return html`
       <canvas
         id=${id}
         width=${this.width}
         height=${this.height}
         style=${styleMap({
-          transform: `translate(${position.x}%, ${position.y}%) scale(${scale})`,
+          transform: `scale(${scale}) translate(${absoluteX}px, ${absoluteY}px)`,
         })}
       >
       </canvas>
@@ -245,70 +277,12 @@ export class EmblemPreview extends LitElement {
     primaryColor?: string,
     secondaryColor?: string
   ): Promise<void> {
-    if (!this.width || !this.height || !part) {
+    if (!this.width || !this.height) {
       return;
     }
 
-    const canvas = this.shadowRoot?.getElementById(canvasId);
-    if (!canvas || !(canvas instanceof HTMLCanvasElement)) {
-      return;
-    }
-
-    const context = canvas.getContext('2d');
-    if (!context) {
-      return;
-    }
-
-    const image = document.createElement('img');
-    image.src = part.path;
-
-    return new Promise(resolve => {
-      context.clearRect(
-        0,
-        0,
-        Math.floor(canvas.width),
-        Math.floor(canvas.height)
-      );
-      image.onload = () => {
-        const imageSize = Math.min(canvas.width, canvas.height);
-        const x = Math.max(0, (canvas.width - canvas.height) / 2);
-        const y = Math.max(0, (canvas.height - canvas.width) / 2);
-        context.drawImage(
-          image,
-          Math.floor(x),
-          Math.floor(y),
-          Math.floor(imageSize),
-          Math.floor(imageSize)
-        );
-        const imageData = context.getImageData(
-          0,
-          0,
-          Math.floor(canvas.width),
-          Math.floor(canvas.height)
-        );
-        for (let row = 0; row < canvas.height; row++) {
-          for (let col = 0; col < canvas.width; col++) {
-            const index = row * Math.floor(canvas.width) * 4 + col * 4;
-            const r = imageData.data[index];
-            const g = imageData.data[index + 1];
-            const b = imageData.data[index + 2];
-            if (r < 128 && g < 128 && b < 128) {
-              const color = parseColor(primaryColor || '#000000');
-              imageData.data[index] = color.r;
-              imageData.data[index + 1] = color.g;
-              imageData.data[index + 2] = color.b;
-            } else if (r >= 128 && g >= 128 && b >= 128) {
-              const color = parseColor(secondaryColor || '#ffffff');
-              imageData.data[index] = color.r;
-              imageData.data[index + 1] = color.g;
-              imageData.data[index + 2] = color.b;
-            }
-          }
-        }
-        context.putImageData(imageData, 0, 0);
-        resolve();
-      };
-    });
+    const element = this.shadowRoot?.getElementById(canvasId);
+    return drawPart(element, part, primaryColor, secondaryColor);
   }
 
   private updateWidthAndHeight() {

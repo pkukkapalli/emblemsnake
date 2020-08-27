@@ -1,28 +1,34 @@
 import {
-  customElement,
   LitElement,
+  customElement,
+  property,
   CSSResult,
   css,
   TemplateResult,
   html,
-  property,
 } from 'lit-element';
 import { classMap } from 'lit-html/directives/class-map';
 
-@customElement('emblem-button')
-export class EmblemButton extends LitElement {
-  @property({ type: Boolean })
-  private selected = false;
+export enum IconSize {
+  SMALL,
+  NORMAL,
+}
+
+@customElement('emblem-icon-button')
+export class EmblemIconButton extends LitElement {
+  @property({ type: Number })
+  private size = IconSize.NORMAL;
 
   static get styles(): CSSResult {
     return css`
       button {
-        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 3rem;
         height: 3rem;
         border: none;
-        text-transform: uppercase;
-        cursor: pointer;
-        font-weight: bold;
+        border-radius: 50%;
         transition: all 200ms ease-in;
         box-sizing: border-box;
         padding: 0;
@@ -31,8 +37,12 @@ export class EmblemButton extends LitElement {
         cursor: pointer;
       }
 
-      button:hover,
-      button.selected {
+      .small {
+        width: 0.5rem;
+        height: 0.5rem;
+      }
+
+      button:hover {
         background: #eee;
       }
 
@@ -45,7 +55,7 @@ export class EmblemButton extends LitElement {
   render(): TemplateResult {
     return html`
       <button
-        class=${classMap({ selected: this.selected })}
+        class=${classMap({ small: this.size === IconSize.SMALL })}
         @click=${() => this.dispatchEvent(new CustomEvent('click'))}
       >
         <slot></slot>
