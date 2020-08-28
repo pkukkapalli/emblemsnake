@@ -89,8 +89,13 @@ export class EmblemApp extends LitElement {
         flex: 6;
         height: 100%;
         background: lightgray;
-        overflow-x: hidden;
         box-sizing: border-box;
+      }
+
+      @media only screen and (min-width: 600px) {
+        .menu {
+          overflow-x: hidden;
+        }
       }
 
       .tabs-container {
@@ -128,7 +133,7 @@ export class EmblemApp extends LitElement {
 
       emblem-preview {
         flex: 4;
-        height: 100%;
+        min-height: 500px;
       }
     `;
   }
