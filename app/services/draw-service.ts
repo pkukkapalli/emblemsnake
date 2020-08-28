@@ -91,8 +91,32 @@ export async function drawPart(
   return new Promise(resolve => {
     image.onload = () => {
       clearCanvas(canvas, context);
-      drawImage(canvas, context, image);
-      applyColor(canvas, context, primaryColor, secondaryColor);
+      const offscreenCanvas = document.createElement('canvas');
+      offscreenCanvas.width = canvas.width * 2;
+      offscreenCanvas.height = canvas.height * 2;
+      const offscreenContext = offscreenCanvas.getContext('2d');
+      if (!offscreenContext) {
+        return;
+      }
+      clearCanvas(offscreenCanvas, offscreenContext);
+      drawImage(offscreenCanvas, offscreenContext, image);
+      applyColor(
+        offscreenCanvas,
+        offscreenContext,
+        primaryColor,
+        secondaryColor
+      );
+      context.drawImage(
+        offscreenCanvas,
+        0,
+        0,
+        offscreenCanvas.width,
+        offscreenCanvas.height,
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      );
       resolve();
     };
   });

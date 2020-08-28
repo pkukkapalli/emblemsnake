@@ -20,6 +20,18 @@ const STANDARD_POSITION_DIFF = 5;
 const DEFAULT_POSITION = { x: 0, y: 0 };
 const STANDARD_SCALE_DIFF = 0.1;
 
+enum MoveDirection {
+  LEFT,
+  RIGHT,
+  UP,
+  DOWN,
+}
+
+enum ScaleMode {
+  UP,
+  DOWN,
+}
+
 @customElement('emblem-preview')
 export class EmblemPreview extends LitElement {
   @property()
@@ -100,6 +112,28 @@ export class EmblemPreview extends LitElement {
         height: 100%;
       }
 
+      .move-controls {
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+        display: flex;
+      }
+
+      .move-controls emblem-icon-button:not(:first-child) {
+        margin-left: 1rem;
+      }
+
+      .scale-controls {
+        position: absolute;
+        bottom: 1rem;
+        left: 1rem;
+        display: flex;
+      }
+
+      .scale-controls emblem-icon-button:not(:first-child) {
+        margin-left: 1rem;
+      }
+
       .download {
         position: absolute;
         right: 1rem;
@@ -147,6 +181,32 @@ export class EmblemPreview extends LitElement {
           this.word2Position,
           this.word2Scale
         )}
+      </div>
+      <div class="move-controls">
+        <emblem-icon-button
+          @click=${() => this.handleMoving(MoveDirection.LEFT)}
+        >
+          <img src="/assets/left.svg" />
+        </emblem-icon-button>
+        <emblem-icon-button @click=${() => this.handleMoving(MoveDirection.UP)}
+          ><img src="/assets/up.svg"
+        /></emblem-icon-button>
+        <emblem-icon-button
+          @click=${() => this.handleMoving(MoveDirection.DOWN)}
+          ><img src="/assets/down.svg"
+        /></emblem-icon-button>
+        <emblem-icon-button
+          @click=${() => this.handleMoving(MoveDirection.RIGHT)}
+          ><img src="/assets/right.svg"
+        /></emblem-icon-button>
+      </div>
+      <div class="scale-controls">
+        <emblem-icon-button @click=${() => this.handleScaling(ScaleMode.UP)}
+          ><img src="/assets/zoom-in.svg"
+        /></emblem-icon-button>
+        <emblem-icon-button @click=${() => this.handleScaling(ScaleMode.DOWN)}
+          ><img src="/assets/zoom-out.svg"
+        /></emblem-icon-button>
       </div>
       <emblem-icon-button
         class="download"
@@ -297,25 +357,42 @@ export class EmblemPreview extends LitElement {
 
   private handleKeyboard(event: KeyboardEvent) {
     if (event.ctrlKey) {
-      this.handleScaling(event);
+      this.handleScalingViaKeyboard(event);
     } else {
-      this.handleMoving(event);
+      this.handleMovingViaKeyboard(event);
     }
   }
 
-  private handleMoving(event: KeyboardEvent) {
-    const diff = { x: 0, y: 0 };
+  private handleMovingViaKeyboard(event: KeyboardEvent) {
     switch (event.key) {
       case 'ArrowLeft':
-        diff.x = -STANDARD_POSITION_DIFF;
+        this.handleMoving(MoveDirection.LEFT);
         break;
       case 'ArrowRight':
-        diff.x = STANDARD_POSITION_DIFF;
+        this.handleMoving(MoveDirection.RIGHT);
         break;
       case 'ArrowUp':
-        diff.y = -STANDARD_POSITION_DIFF;
+        this.handleMoving(MoveDirection.UP);
         break;
       case 'ArrowDown':
+        this.handleMoving(MoveDirection.DOWN);
+        break;
+    }
+  }
+
+  private handleMoving(direction: MoveDirection) {
+    const diff = { x: 0, y: 0 };
+    switch (direction) {
+      case MoveDirection.LEFT:
+        diff.x = -STANDARD_POSITION_DIFF;
+        break;
+      case MoveDirection.RIGHT:
+        diff.x = STANDARD_POSITION_DIFF;
+        break;
+      case MoveDirection.UP:
+        diff.y = -STANDARD_POSITION_DIFF;
+        break;
+      case MoveDirection.DOWN:
         diff.y = STANDARD_POSITION_DIFF;
         break;
     }
@@ -365,13 +442,24 @@ export class EmblemPreview extends LitElement {
     return { x: position.x + diff.x, y: position.y + diff.y };
   }
 
-  private handleScaling(event: KeyboardEvent) {
-    let diff = 0;
+  private handleScalingViaKeyboard(event: KeyboardEvent) {
     switch (event.key) {
       case 'ArrowUp':
-        diff += STANDARD_SCALE_DIFF;
+        this.handleScaling(ScaleMode.UP);
         break;
       case 'ArrowDown':
+        this.handleScaling(ScaleMode.DOWN);
+        break;
+    }
+  }
+
+  private handleScaling(scaleMode: ScaleMode) {
+    let diff = 0;
+    switch (scaleMode) {
+      case ScaleMode.UP:
+        diff += STANDARD_SCALE_DIFF;
+        break;
+      case ScaleMode.DOWN:
         diff -= STANDARD_SCALE_DIFF;
         break;
     }

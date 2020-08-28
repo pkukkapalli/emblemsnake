@@ -17,11 +17,11 @@ function renderWordToImage(word, path) {
   const context = canvas.getContext('2d');
   context.textBaseline = 'middle';
   context.textAlign = 'center';
-  context.font = '108px Wallpoet';
+  context.font = '108px "Keania One"';
   context.fillStyle = 'black';
   context.fillText(word, 512, 512);
   context.strokeStyle = 'white';
-  context.lineWidth = 4;
+  context.lineWidth = 5;
   context.strokeText(word, 512, 512);
 
   const out = createWriteStream(path);
