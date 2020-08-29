@@ -1,7 +1,6 @@
 import { PartPosition } from '../stores/editor-store';
 import { Part } from '../constants/parts';
 import { drawPart } from './draw-service';
-import { parts } from 'lit-html';
 
 const BLACK = '#000000';
 const WHITE = '#ffffff';
@@ -21,8 +20,8 @@ function positionToCoordinates(
   sourceCanvas: HTMLCanvasElement,
   targetCanvas: HTMLCanvasElement
 ) {
-  const xDiff = position.x / 100 * originalSize;
-  const yDiff = position.y / 100 * originalSize;
+  const xDiff = (position.x / 100) * originalSize;
+  const yDiff = (position.y / 100) * originalSize;
   return {
     x: (targetCanvas.width - sourceCanvas.width) / 2 + xDiff,
     y: (targetCanvas.height - sourceCanvas.height) / 2 + yDiff,
@@ -30,11 +29,17 @@ function positionToCoordinates(
 }
 
 function drawCanvas(
-  {x, y}: PartPosition,
+  { x, y }: PartPosition,
   context: CanvasRenderingContext2D,
   canvas: HTMLCanvasElement
 ) {
-  context.drawImage(canvas, Math.floor(x), Math.floor(y), canvas.width, canvas.height);
+  context.drawImage(
+    canvas,
+    Math.floor(x),
+    Math.floor(y),
+    canvas.width,
+    canvas.height
+  );
 }
 
 export async function download({
@@ -124,10 +129,26 @@ export async function download({
     return;
   }
 
-  drawCanvas(positionToCoordinates(backPosition, partSize, backCanvas, context.canvas), context, backCanvas);
-  drawCanvas(positionToCoordinates(frontPosition, partSize, frontCanvas, context.canvas), context, frontCanvas);
-  drawCanvas(positionToCoordinates(word1Position, partSize, word1Canvas, context.canvas), context, word1Canvas);
-  drawCanvas(positionToCoordinates(word2Position, partSize, word2Canvas, context.canvas), context, word2Canvas);
+  drawCanvas(
+    positionToCoordinates(backPosition, partSize, backCanvas, context.canvas),
+    context,
+    backCanvas
+  );
+  drawCanvas(
+    positionToCoordinates(frontPosition, partSize, frontCanvas, context.canvas),
+    context,
+    frontCanvas
+  );
+  drawCanvas(
+    positionToCoordinates(word1Position, partSize, word1Canvas, context.canvas),
+    context,
+    word1Canvas
+  );
+  drawCanvas(
+    positionToCoordinates(word2Position, partSize, word2Canvas, context.canvas),
+    context,
+    word2Canvas
+  );
 
   const link = document.createElement('a');
   link.download = 'emblem.jpg';

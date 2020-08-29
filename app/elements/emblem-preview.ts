@@ -221,9 +221,6 @@ export class EmblemPreview extends LitElement {
     position = { x: 0, y: 0 },
     scale = 1
   ) {
-    const canvasSize = Math.min(this.width || 0, this.height || 0);
-    const absoluteX = (position.x / 100) * canvasSize;
-    const absoluteY = (position.y / 100) * canvasSize;
     return html`
       <canvas
         id=${id}
