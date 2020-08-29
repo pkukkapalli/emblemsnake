@@ -15,19 +15,26 @@ function createCanvas(width: number, height: number) {
   return canvas;
 }
 
-function positionToCoordinates(sourceCanvas: HTMLCanvasElement, targetCanvas: HTMLCanvasElement) {
+function positionToCoordinates(
+  position: PartPosition,
+  originalSize: number,
+  sourceCanvas: HTMLCanvasElement,
+  targetCanvas: HTMLCanvasElement
+) {
+  const xDiff = position.x / 100 * originalSize;
+  const yDiff = position.y / 100 * originalSize;
   return {
-    x: (targetCanvas.width - sourceCanvas.width) / 2,
-    y: (targetCanvas.height - sourceCanvas.height) / 2,
+    x: (targetCanvas.width - sourceCanvas.width) / 2 + xDiff,
+    y: (targetCanvas.height - sourceCanvas.height) / 2 + yDiff,
   };
 }
 
 function drawCanvas(
+  {x, y}: PartPosition,
   context: CanvasRenderingContext2D,
   canvas: HTMLCanvasElement
 ) {
-  const { x, y } = positionToCoordinates(canvas, context.canvas);
-  context.drawImage(canvas, x, y, canvas.width, canvas.height);
+  context.drawImage(canvas, Math.floor(x), Math.floor(y), canvas.width, canvas.height);
 }
 
 export async function download({
@@ -74,10 +81,22 @@ export async function download({
   word2Scale?: number;
 }): Promise<void> {
   const partSize = Math.floor(WALLPAPER_HEIGHT / 2);
-  const backCanvas = createCanvas(Math.floor(partSize * backScale), Math.floor(partSize * backScale));
-  const frontCanvas = createCanvas(Math.floor(partSize * frontScale), Math.floor(partSize * frontScale));
-  const word1Canvas = createCanvas(Math.floor(partSize * word1Scale), Math.floor(partSize * word1Scale));
-  const word2Canvas = createCanvas(Math.floor(partSize * word2Scale), Math.floor(partSize * word2Scale));
+  const backCanvas = createCanvas(
+    Math.floor(partSize * backScale),
+    Math.floor(partSize * backScale)
+  );
+  const frontCanvas = createCanvas(
+    Math.floor(partSize * frontScale),
+    Math.floor(partSize * frontScale)
+  );
+  const word1Canvas = createCanvas(
+    Math.floor(partSize * word1Scale),
+    Math.floor(partSize * word1Scale)
+  );
+  const word2Canvas = createCanvas(
+    Math.floor(partSize * word2Scale),
+    Math.floor(partSize * word2Scale)
+  );
 
   await drawPart(backCanvas, backChoice, backPrimaryColor, backSecondaryColor);
   await drawPart(
@@ -105,10 +124,10 @@ export async function download({
     return;
   }
 
-  drawCanvas(context, backCanvas);
-  drawCanvas(context, frontCanvas);
-  drawCanvas(context, word1Canvas);
-  drawCanvas(context, word2Canvas);
+  drawCanvas(positionToCoordinates(backPosition, partSize, backCanvas, context.canvas), context, backCanvas);
+  drawCanvas(positionToCoordinates(frontPosition, partSize, frontCanvas, context.canvas), context, frontCanvas);
+  drawCanvas(positionToCoordinates(word1Position, partSize, word1Canvas, context.canvas), context, word1Canvas);
+  drawCanvas(positionToCoordinates(word2Position, partSize, word2Canvas, context.canvas), context, word2Canvas);
 
   const link = document.createElement('a');
   link.download = 'emblem.jpg';

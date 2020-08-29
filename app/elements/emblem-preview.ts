@@ -16,7 +16,7 @@ import { drawPart } from '../services/draw-service';
 import './emblem-icon-button';
 import { download } from '../services/download-service';
 
-const STANDARD_POSITION_DIFF = 5;
+const STANDARD_POSITION_DIFF = 1;
 const DEFAULT_POSITION = { x: 0, y: 0 };
 const STANDARD_SCALE_DIFF = 0.1;
 
@@ -230,7 +230,7 @@ export class EmblemPreview extends LitElement {
         width=${this.width}
         height=${this.height}
         style=${styleMap({
-          transform: `scale(${scale}) translate(${absoluteX}px, ${absoluteY}px)`,
+          transform: `scale(${scale}) translate(${position.x}%, ${position.y}%)`,
         })}
       >
       </canvas>
