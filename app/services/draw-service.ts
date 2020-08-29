@@ -36,6 +36,15 @@ function parseColor(color: string) {
   };
 }
 
+function scaleColor(color: string, scale: number) {
+  const { r, g, b } = parseColor(color);
+  return {
+    r: Math.floor(scale * r),
+    g: Math.floor(scale * g),
+    b: Math.floor(scale * b),
+  };
+}
+
 function applyColor(
   canvas: HTMLCanvasElement,
   context: CanvasRenderingContext2D,
@@ -53,14 +62,15 @@ function applyColor(
       const g = imageData.data[index + 1];
       const b = imageData.data[index + 2];
       const a = imageData.data[index + 3];
+      const scale = (r + g + b) / (255 * 3);
 
       if (r < 128 && g < 128 && b < 128 && a > 0) {
-        const color = parseColor(primaryColor || '#000000');
+        const color = scaleColor(primaryColor || '#000000', 1 - scale);
         imageData.data[index] = color.r;
         imageData.data[index + 1] = color.g;
         imageData.data[index + 2] = color.b;
       } else if (r >= 128 && g >= 128 && b >= 128 && a > 0) {
-        const color = parseColor(secondaryColor || '#ffffff');
+        const color = scaleColor(secondaryColor || '#ffffff', scale);
         imageData.data[index] = color.r;
         imageData.data[index + 1] = color.g;
         imageData.data[index + 2] = color.b;
