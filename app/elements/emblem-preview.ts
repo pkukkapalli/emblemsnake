@@ -171,7 +171,10 @@ export class EmblemPreview extends LitElement {
   connectedCallback() {
     super.connectedCallback();
     this.updateWidthAndHeight();
-    window.addEventListener('resize', debounce(() => this.updateWidthAndHeight(), 500));
+    window.addEventListener(
+      'resize',
+      debounce(() => this.updateWidthAndHeight(), 500)
+    );
     window.addEventListener('keydown', (event: KeyboardEvent) => {
       if (
         this.shadowRoot?.activeElement !==
