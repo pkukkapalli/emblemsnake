@@ -15,6 +15,7 @@ import { PartPosition } from '../stores/editor-store';
 import { drawPart } from '../services/draw-service';
 import './emblem-icon-button';
 import { download } from '../services/download-service';
+import { classMap } from 'lit-html/directives/class-map';
 
 const STANDARD_POSITION_DIFF = 1;
 const DEFAULT_POSITION = { x: 0, y: 0 };
@@ -87,6 +88,8 @@ export class EmblemPreview extends LitElement {
   height?: number;
   @internalProperty()
   isDownloading = false;
+  @internalProperty()
+  isDownloadOptionsOpen = false;
 
   static get styles(): CSSResult {
     return css`
@@ -140,6 +143,26 @@ export class EmblemPreview extends LitElement {
         position: absolute;
         right: 1rem;
         bottom: 1rem;
+      }
+
+      .download-options {
+        position: absolute;
+        right: 1rem;
+        bottom: 1rem;
+        width: 50%;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 200ms ease-in;
+      }
+
+      .download-options.open {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .download-options emblem-icon-button {
+        float: right;
+        margin-bottom: 1rem;
       }
     `;
   }
@@ -210,9 +233,34 @@ export class EmblemPreview extends LitElement {
           ><img src="/assets/zoom-out.svg"
         /></emblem-icon-button>
       </div>
-      <emblem-icon-button class="download" @click=${() => this.download()}>
+      <emblem-icon-button
+        class="download"
+        @click=${() => (this.isDownloadOptionsOpen = true)}
+      >
         <img src="/assets/download.svg" />
       </emblem-icon-button>
+      <div
+        class=${classMap({
+          'download-options': true,
+          open: this.isDownloadOptionsOpen,
+        })}
+      >
+        <emblem-icon-button @click=${() => (this.isDownloadOptionsOpen = false)}
+          ><img src="/assets/close.svg"
+        /></emblem-icon-button>
+        <emblem-button @click=${() => this.download()}
+          >Desktop Wallpaper Left-aligned</emblem-button
+        >
+        <emblem-button @click=${() => this.download()}
+          >Desktop Wallpaper Center-aligned</emblem-button
+        >
+        <emblem-button @click=${() => this.download()}
+          >Desktop Wallpaper Right-aligned</emblem-button
+        >
+        <emblem-button @click=${() => this.download()}
+          >Phone Wallpaper</emblem-button
+        >
+      </div>
     `;
   }
 
@@ -501,5 +549,6 @@ export class EmblemPreview extends LitElement {
       word2Scale: this.word2Scale,
     });
     this.isDownloading = false;
+    this.isDownloadOptionsOpen = false;
   }
 }
