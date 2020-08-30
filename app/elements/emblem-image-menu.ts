@@ -27,7 +27,7 @@ export class EmblemImageMenu extends LitElement {
 
   static get styles(): CSSResult {
     return css`
-      .container {
+      :host {
         display: flex;
         flex-direction: column;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
@@ -111,13 +111,11 @@ export class EmblemImageMenu extends LitElement {
     const groups = this.groups || [];
     const parts = this.parts || {};
     return html`
-      <div class="container">
-        <div class="tabs">
-          ${groups.map(group => this.renderGroup(group))}
-        </div>
-        <div class="images">
-          ${Object.keys(parts).map(key => this.renderImage(key, parts[key]))}
-        </div>
+      <div class="tabs">
+        ${groups.map(group => this.renderGroup(group))}
+      </div>
+      <div class="images">
+        ${Object.keys(parts).map(key => this.renderImage(key, parts[key]))}
       </div>
     `;
   }

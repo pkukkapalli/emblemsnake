@@ -126,7 +126,18 @@ export class EmblemPreview extends LitElement {
       }
 
       .move-controls emblem-icon-button:not(:first-child) {
-        margin-left: 1rem;
+        margin-left: 0.5rem;
+      }
+
+      .undo-redo {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        display: flex;
+      }
+
+      .undo-redo emblem-icon-button:not(:first-child) {
+        margin-left: 0.5rem;
       }
 
       .scale-controls {
@@ -137,7 +148,7 @@ export class EmblemPreview extends LitElement {
       }
 
       .scale-controls emblem-icon-button:not(:first-child) {
-        margin-left: 1rem;
+        margin-left: 0.5rem;
       }
 
       .download {
@@ -228,6 +239,14 @@ export class EmblemPreview extends LitElement {
           @click=${() => this.handleMoving(MoveDirection.RIGHT)}
           ><img src="/assets/right.svg"
         /></emblem-icon-button>
+      </div>
+      <div class="undo-redo">
+        <emblem-icon-button @click=${() => this.handleUndo()}>
+          <img src="/assets/undo.svg" />
+        </emblem-icon-button>
+        <emblem-icon-button @click=${() => this.handleRedo()}>
+          <img src="/assets/redo.svg" />
+        </emblem-icon-button>
       </div>
       <div class="scale-controls">
         <emblem-icon-button @click=${() => this.handleScaling(ScaleMode.UP)}
@@ -386,6 +405,16 @@ export class EmblemPreview extends LitElement {
     const { width, height } = this.getBoundingClientRect();
     this.width = Math.floor(width);
     this.height = Math.floor(height);
+  }
+
+  private handleUndo() {
+    console.log('dispatching undo');
+    this.dispatchEvent(new CustomEvent('undo'));
+  }
+
+  private handleRedo() {
+    console.log('dispatching redo');
+    this.dispatchEvent(new CustomEvent('redo'));
   }
 
   private handleKeyboard(event: KeyboardEvent) {

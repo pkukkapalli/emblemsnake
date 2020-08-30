@@ -87,7 +87,6 @@ export class EmblemApp extends LitElement {
 
       .menu {
         flex: 6;
-        height: 100%;
         background: lightgray;
         box-sizing: border-box;
       }
@@ -104,10 +103,41 @@ export class EmblemApp extends LitElement {
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
       }
 
+      .tags-container {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        margin-bottom: 2rem;
+      }
+
+      .tags-container > div {
+        margin-left: 1rem;
+      }
+
+      .tag {
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+        padding: 0.5rem 1rem;
+        border-radius: 2rem;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        background: #eee;
+        line-height: 0;
+      }
+
+      .remove-tag {
+        margin-left: 1rem;
+        cursor: pointer;
+        line-height: 0;
+      }
+
       .colors {
         display: flex;
         flex-direction: column;
         margin-bottom: 2rem;
+        margin-left: 2rem;
+        margin-right: 2rem;
       }
 
       @media only screen and (min-width: 600px) {
@@ -150,6 +180,8 @@ export class EmblemApp extends LitElement {
       <div class="container">
         <emblem-preview
           .tab=${this.tab}
+          @undo=${() => this.editorStore?.undo()}
+          @redo=${() => this.editorStore?.redo()}
           .backChoice=${this.getBackChoice()}
           .backPrimaryColor=${this.editorState?.backPrimaryColor}
           .backSecondaryColor=${this.editorState?.backSecondaryColor}
@@ -181,7 +213,8 @@ export class EmblemApp extends LitElement {
         >
         </emblem-preview>
         <div class="menu">
-          ${this.renderTabs()} ${this.renderColors()} ${this.renderParts()}
+          ${this.renderTabs()} ${this.renderTags()} ${this.renderColors()}
+          ${this.renderParts()}
         </div>
       </div>
     `;
@@ -212,6 +245,29 @@ export class EmblemApp extends LitElement {
             this.handleTabChange(event.detail.tab)}
         >
         </emblem-tabs>
+      </div>
+    `;
+  }
+
+  private renderTags(): TemplateResult {
+    return html`
+      <div class="tags-container">
+        <div class="tag">
+          Back: ${this.getBackChoice()?.name}
+          <div class="remove-tag"><img src="/assets/close.svg" /></div>
+        </div>
+        <div class="tag">
+          Front: ${this.getFrontChoice()?.name}
+          <div class="remove-tag"><img src="/assets/close.svg" /></div>
+        </div>
+        <div class="tag">
+          Word 1: ${this.getWord1Choice()?.name}
+          <div class="remove-tag"><img src="/assets/close.svg" /></div>
+        </div>
+        <div class="tag">
+          Word 2: ${this.getWord2Choice()?.name}
+          <div class="remove-tag"><img src="/assets/close.svg" /></div>
+        </div>
       </div>
     `;
   }

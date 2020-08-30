@@ -57,12 +57,6 @@ export class EmblemColorMenu extends LitElement {
         background: #eee;
       }
 
-      @media only screen and (min-width: 1000px) {
-        .colors {
-          padding: 2rem;
-        }
-      }
-
       .row {
         display: flex;
         flex-direction: row;

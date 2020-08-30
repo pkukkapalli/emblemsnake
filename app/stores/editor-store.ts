@@ -38,16 +38,21 @@ type EditorStateListener = (state: EditorState) => void;
 export class EditorStore {
   private readonly listener: EditorStateListener;
   private state: EditorState;
+  private log: EditorState[];
+  private logIndex: number;
 
   constructor(listener: EditorStateListener) {
     this.listener = listener;
     this.state = {};
+    this.log = [];
+    this.logIndex = 0;
   }
 
   connect(): Promise<void> {
     return new Promise(resolve => {
       const stateString = localStorage.getItem('editor-state');
       this.state = JSON.parse(stateString || '{}');
+      this.log = [this.state];
       this.listener(this.state);
       resolve();
     });
@@ -55,10 +60,29 @@ export class EditorStore {
 
   update(changes: EditorState): Promise<void> {
     this.state = Object.assign({}, this.state, changes);
+    this.log = this.log.slice(0, this.logIndex + 1);
+    this.logIndex++;
+    this.log[this.logIndex] = this.state;
     this.listener(this.state);
     return new Promise(resolve => {
       localStorage.setItem('editor-state', JSON.stringify(this.state));
       resolve();
     });
+  }
+
+  undo() {
+    if (this.logIndex > 0) {
+      this.logIndex--;
+      this.state = this.log[this.logIndex];
+      this.listener(this.state);
+    }
+  }
+
+  redo() {
+    if (this.logIndex < this.log.length - 1) {
+      this.logIndex++;
+      this.state = this.log[this.logIndex];
+      this.listener(this.state);
+    }
   }
 }
