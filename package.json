@@ -19,6 +19,7 @@
     "@open-wc/eslint-config": "^2.0.0",
     "@open-wc/testing": "^2.0.0",
     "@open-wc/testing-karma": "^3.0.0",
+    "@types/lodash-es": "^4.17.3",
     "@types/node": "13.11.1",
     "@typescript-eslint/eslint-plugin": "^2.20.0",
     "@typescript-eslint/parser": "^2.20.0",
@@ -53,14 +54,14 @@
     ]
   },
   "name": "emblem-app",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Webcomponent emblem-app following open-wc recommendations",
   "author": "emblem-app",
   "license": "MIT",
   "dependencies": {
-    "jimp": "^0.16.0",
     "lit-element": "^2.0.1",
     "lit-html": "^1.0.0",
+    "lodash-es": "^4.17.15",
     "pwa-helpers": "^0.9.1"
   },
   "eslintConfig": {

@@ -16,6 +16,7 @@ import { drawPart } from '../services/draw-service';
 import './emblem-icon-button';
 import { download } from '../services/download-service';
 import { classMap } from 'lit-html/directives/class-map';
+import debounce from 'lodash-es/debounce';
 
 const STANDARD_POSITION_DIFF = 1;
 const DEFAULT_POSITION = { x: 0, y: 0 };
@@ -170,7 +171,7 @@ export class EmblemPreview extends LitElement {
   connectedCallback() {
     super.connectedCallback();
     this.updateWidthAndHeight();
-    window.addEventListener('resize', () => this.updateWidthAndHeight());
+    window.addEventListener('resize', debounce(() => this.updateWidthAndHeight(), 500));
     window.addEventListener('keydown', (event: KeyboardEvent) => {
       if (
         this.shadowRoot?.activeElement !==
