@@ -24,7 +24,7 @@ class PartsSpider(scrapy.Spider):
                           args={'wait': 5})
         ]
 
-    def parse(self, response):
+    def parse(self, response): # pylint: disable=arguments-differ
         # Back normal
         for item in parse_gallery(response, 'gallery-0',
                                   EmblemPartGroup.BACK_NORMAL):
@@ -56,7 +56,7 @@ class PartsSpider(scrapy.Spider):
             yield item
 
         # Front FOB
-        # TODO: Figure out how to make the background transparent on these.
+        # Figure out how to make the background transparent on these.
         # for item in parse_gallery(response, 'gallery-6',
         #                           EmblemPartGroup.FRONT_SPECIAL):
         #     yield item
