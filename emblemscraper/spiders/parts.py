@@ -24,7 +24,7 @@ class PartsSpider(scrapy.Spider):
                           args={'wait': 5})
         ]
 
-    def parse(self, response): # pylint: disable=arguments-differ
+    def parse(self, response):  # pylint: disable=arguments-differ
         # Back normal
         for item in parse_gallery(response, 'gallery-0',
                                   EmblemPartGroup.BACK_NORMAL):

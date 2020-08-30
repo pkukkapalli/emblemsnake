@@ -14,7 +14,7 @@ import { styleMap } from 'lit-html/directives/style-map';
 import { PartPosition } from '../stores/editor-store';
 import { drawPart } from '../services/draw-service';
 import './emblem-icon-button';
-import { download } from '../services/download-service';
+import { download, DownloadOrientation } from '../services/download-service';
 import { classMap } from 'lit-html/directives/class-map';
 import debounce from 'lodash-es/debounce';
 
@@ -252,16 +252,20 @@ export class EmblemPreview extends LitElement {
         <emblem-icon-button @click=${() => (this.isDownloadOptionsOpen = false)}
           ><img src="/assets/close.svg"
         /></emblem-icon-button>
-        <emblem-button @click=${() => this.download()}
+        <emblem-button
+          @click=${() => this.download(DownloadOrientation.DESKTOP_LEFT_ALIGN)}
           >Desktop Wallpaper Left-aligned</emblem-button
         >
-        <emblem-button @click=${() => this.download()}
+        <emblem-button
+          @click=${() =>
+            this.download(DownloadOrientation.DESKTOP_CENTER_ALIGN)}
           >Desktop Wallpaper Center-aligned</emblem-button
         >
-        <emblem-button @click=${() => this.download()}
+        <emblem-button
+          @click=${() => this.download(DownloadOrientation.DESKTOP_RIGHT_ALIGN)}
           >Desktop Wallpaper Right-aligned</emblem-button
         >
-        <emblem-button @click=${() => this.download()}
+        <emblem-button @click=${() => this.download(DownloadOrientation.PHONE)}
           >Phone Wallpaper</emblem-button
         >
       </div>
@@ -525,12 +529,12 @@ export class EmblemPreview extends LitElement {
     }
   }
 
-  private async download() {
+  private async download(orientation: DownloadOrientation) {
     if (this.isDownloading) {
       return;
     }
     this.isDownloading = true;
-    await download({
+    await download(orientation, {
       backChoice: this.backChoice,
       backPrimaryColor: this.backPrimaryColor,
       backSecondaryColor: this.backSecondaryColor,

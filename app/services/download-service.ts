@@ -2,16 +2,47 @@ import { PartPosition } from '../stores/editor-store';
 import { Part } from '../constants/parts';
 import { drawPart } from './draw-service';
 
+export enum DownloadOrientation {
+  DESKTOP_LEFT_ALIGN,
+  DESKTOP_CENTER_ALIGN,
+  DESKTOP_RIGHT_ALIGN,
+  PHONE,
+}
+
 const BLACK = '#000000';
 const WHITE = '#ffffff';
-const WALLPAPER_WIDTH = 1920;
-const WALLPAPER_HEIGHT = 1080;
+const DESKTOP_WIDTH = 1920;
+const DESKTOP_HEIGHT = 1080;
+const PHONE_WIDTH = 759;
+const PHONE_HEIGHT = 1334;
 
 function createCanvas(width: number, height: number) {
   const canvas = document.createElement('canvas');
   canvas.width = width;
   canvas.height = height;
   return canvas;
+}
+
+function shiftForOrientation(
+  position: PartPosition,
+  orientation: DownloadOrientation,
+  targetCanvas: HTMLCanvasElement
+) {
+  switch (orientation) {
+    case DownloadOrientation.DESKTOP_LEFT_ALIGN:
+      return {
+        x: position.x - Math.floor(targetCanvas.width / 4),
+        y: position.y,
+      };
+    case DownloadOrientation.DESKTOP_RIGHT_ALIGN:
+      return {
+        x: position.x + Math.floor(targetCanvas.width / 4),
+        y: position.y,
+      };
+    case DownloadOrientation.DESKTOP_CENTER_ALIGN:
+    case DownloadOrientation.PHONE:
+      return position;
+  }
 }
 
 function positionToCoordinates(
@@ -42,50 +73,68 @@ function drawCanvas(
   );
 }
 
-export async function download({
-  backChoice,
-  backPrimaryColor = BLACK,
-  backSecondaryColor = WHITE,
-  backPosition = { x: 0, y: 0 },
-  backScale = 1,
-  frontChoice,
-  frontPrimaryColor = BLACK,
-  frontSecondaryColor = WHITE,
-  frontPosition = { x: 0, y: 0 },
-  frontScale = 1,
-  word1Choice,
-  word1PrimaryColor = BLACK,
-  word1SecondaryColor = WHITE,
-  word1Position = { x: 0, y: 0 },
-  word1Scale = 1,
-  word2Choice,
-  word2PrimaryColor = BLACK,
-  word2SecondaryColor = WHITE,
-  word2Position = { x: 0, y: 0 },
-  word2Scale = 1,
-}: {
-  backChoice?: Part;
-  backPrimaryColor?: string;
-  backSecondaryColor?: string;
-  backPosition?: PartPosition;
-  backScale?: number;
-  frontChoice?: Part;
-  frontPrimaryColor?: string;
-  frontSecondaryColor?: string;
-  frontPosition?: PartPosition;
-  frontScale?: number;
-  word1Choice?: Part;
-  word1PrimaryColor?: string;
-  word1SecondaryColor?: string;
-  word1Position?: PartPosition;
-  word1Scale?: number;
-  word2Choice?: Part;
-  word2PrimaryColor?: string;
-  word2SecondaryColor?: string;
-  word2Position?: PartPosition;
-  word2Scale?: number;
-}): Promise<void> {
-  const partSize = Math.floor(WALLPAPER_HEIGHT / 2);
+export async function download(
+  orientation: DownloadOrientation,
+  {
+    backChoice,
+    backPrimaryColor = BLACK,
+    backSecondaryColor = WHITE,
+    backPosition = { x: 0, y: 0 },
+    backScale = 1,
+    frontChoice,
+    frontPrimaryColor = BLACK,
+    frontSecondaryColor = WHITE,
+    frontPosition = { x: 0, y: 0 },
+    frontScale = 1,
+    word1Choice,
+    word1PrimaryColor = BLACK,
+    word1SecondaryColor = WHITE,
+    word1Position = { x: 0, y: 0 },
+    word1Scale = 1,
+    word2Choice,
+    word2PrimaryColor = BLACK,
+    word2SecondaryColor = WHITE,
+    word2Position = { x: 0, y: 0 },
+    word2Scale = 1,
+  }: {
+    backChoice?: Part;
+    backPrimaryColor?: string;
+    backSecondaryColor?: string;
+    backPosition?: PartPosition;
+    backScale?: number;
+    frontChoice?: Part;
+    frontPrimaryColor?: string;
+    frontSecondaryColor?: string;
+    frontPosition?: PartPosition;
+    frontScale?: number;
+    word1Choice?: Part;
+    word1PrimaryColor?: string;
+    word1SecondaryColor?: string;
+    word1Position?: PartPosition;
+    word1Scale?: number;
+    word2Choice?: Part;
+    word2PrimaryColor?: string;
+    word2SecondaryColor?: string;
+    word2Position?: PartPosition;
+    word2Scale?: number;
+  }
+): Promise<void> {
+  let wallpaperWidth;
+  let wallpaperHeight;
+  switch (orientation) {
+    case DownloadOrientation.DESKTOP_LEFT_ALIGN:
+    case DownloadOrientation.DESKTOP_CENTER_ALIGN:
+    case DownloadOrientation.DESKTOP_RIGHT_ALIGN:
+      wallpaperWidth = DESKTOP_WIDTH;
+      wallpaperHeight = DESKTOP_HEIGHT;
+      break;
+    case DownloadOrientation.PHONE:
+      wallpaperWidth = PHONE_WIDTH;
+      wallpaperHeight = PHONE_HEIGHT;
+      break;
+  }
+
+  const partSize = Math.floor(Math.min(wallpaperWidth, wallpaperHeight) / 2);
   const backCanvas = createCanvas(
     Math.floor(partSize * backScale),
     Math.floor(partSize * backScale)
@@ -123,29 +172,45 @@ export async function download({
     word2SecondaryColor
   );
 
-  const canvas = createCanvas(WALLPAPER_WIDTH, WALLPAPER_HEIGHT);
+  const canvas = createCanvas(wallpaperWidth, wallpaperHeight);
   const context = canvas.getContext('2d');
   if (!context) {
     return;
   }
 
   drawCanvas(
-    positionToCoordinates(backPosition, backCanvas, context.canvas),
+    shiftForOrientation(
+      positionToCoordinates(backPosition, backCanvas, context.canvas),
+      orientation,
+      context.canvas
+    ),
     context,
     backCanvas
   );
   drawCanvas(
-    positionToCoordinates(frontPosition, frontCanvas, context.canvas),
+    shiftForOrientation(
+      positionToCoordinates(frontPosition, frontCanvas, context.canvas),
+      orientation,
+      context.canvas
+    ),
     context,
     frontCanvas
   );
   drawCanvas(
-    positionToCoordinates(word1Position, word1Canvas, context.canvas),
+    shiftForOrientation(
+      positionToCoordinates(word1Position, word1Canvas, context.canvas),
+      orientation,
+      context.canvas
+    ),
     context,
     word1Canvas
   );
   drawCanvas(
-    positionToCoordinates(word2Position, word2Canvas, context.canvas),
+    shiftForOrientation(
+      positionToCoordinates(word2Position, word2Canvas, context.canvas),
+      orientation,
+      context.canvas
+    ),
     context,
     word2Canvas
   );
