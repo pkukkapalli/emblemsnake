@@ -44,10 +44,7 @@ export class EmblemButton extends LitElement {
 
   render(): TemplateResult {
     return html`
-      <button
-        class=${classMap({ selected: this.selected })}
-        @click=${() => this.dispatchEvent(new CustomEvent('click'))}
-      >
+      <button class=${classMap({ selected: this.selected })}>
         <slot></slot>
       </button>
     `;

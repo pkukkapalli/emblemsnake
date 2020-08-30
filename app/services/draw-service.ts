@@ -87,7 +87,7 @@ export async function drawPart(
   primaryColor?: string,
   secondaryColor?: string
 ): Promise<void> {
-  if (!choice || !canvas || !(canvas instanceof HTMLCanvasElement)) {
+  if (!canvas || !(canvas instanceof HTMLCanvasElement)) {
     return;
   }
 
@@ -96,11 +96,16 @@ export async function drawPart(
     return;
   }
 
+  clearCanvas(canvas, context);
+
+  if (!choice) {
+    return;
+  }
+
   const image = createImage(choice.path);
 
   return new Promise(resolve => {
     image.onload = () => {
-      clearCanvas(canvas, context);
       const offscreenCanvas = document.createElement('canvas');
       offscreenCanvas.width = canvas.width * 2;
       offscreenCanvas.height = canvas.height * 2;

@@ -23,6 +23,7 @@ import './emblem-image-menu';
 import './emblem-word-menu';
 import './emblem-preview';
 import { EditorState, EditorStore } from '../stores/editor-store';
+import { classMap } from 'lit-html/directives/class-map';
 
 const defaultGroupForTab = new Map([
   [Tab.BACK, PartGroupType.BACK_NORMAL],
@@ -104,26 +105,22 @@ export class EmblemApp extends LitElement {
       }
 
       .tags-container {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        align-items: center;
         margin-bottom: 2rem;
-      }
-
-      .tags-container > div {
-        margin-left: 1rem;
+        line-height: 3rem;
       }
 
       .tag {
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
         padding: 0.5rem 1rem;
-        border-radius: 2rem;
-        display: flex;
+        display: inline-flex;
         flex-direction: row;
         align-items: center;
         background: #eee;
         line-height: 0;
+        margin-left: 1rem;
+      }
+
+      .no-tag {
+        display: none;
       }
 
       .remove-tag {
@@ -250,26 +247,78 @@ export class EmblemApp extends LitElement {
   }
 
   private renderTags(): TemplateResult {
+    const backChoice = this.getBackChoice();
+    const frontChoice = this.getFrontChoice();
+    const word1Choice = this.getWord1Choice();
+    const word2Choice = this.getWord2Choice();
     return html`
       <div class="tags-container">
-        <div class="tag">
-          Back: ${this.getBackChoice()?.name}
-          <div class="remove-tag"><img src="/assets/close.svg" /></div>
+        <div class=${classMap({ tag: true, 'no-tag': !backChoice })}>
+          Back: ${backChoice?.name.toUpperCase()}
+          <div class="remove-tag" @click=${() => this.handleClearBack()}>
+            <img src="/assets/close.svg" />
+          </div>
         </div>
-        <div class="tag">
-          Front: ${this.getFrontChoice()?.name}
-          <div class="remove-tag"><img src="/assets/close.svg" /></div>
+        <div class=${classMap({ tag: true, 'no-tag': !frontChoice })}>
+          Front: ${frontChoice?.name.toUpperCase()}
+          <div class="remove-tag" @click=${() => this.handleClearFront()}>
+            <img src="/assets/close.svg" />
+          </div>
         </div>
-        <div class="tag">
-          Word 1: ${this.getWord1Choice()?.name}
-          <div class="remove-tag"><img src="/assets/close.svg" /></div>
+        <div class=${classMap({ tag: true, 'no-tag': !word1Choice })}>
+          Word 1: ${word1Choice?.name.toUpperCase()}
+          <div class="remove-tag" @click=${() => this.handleClearWord1()}>
+            <img src="/assets/close.svg" />
+          </div>
         </div>
-        <div class="tag">
-          Word 2: ${this.getWord2Choice()?.name}
-          <div class="remove-tag"><img src="/assets/close.svg" /></div>
+        <div class=${classMap({ tag: true, 'no-tag': !word2Choice })}>
+          Word 2: ${word2Choice?.name.toUpperCase()}
+          <div class="remove-tag" @click=${() => this.handleClearWord2()}>
+            <img src="/assets/close.svg" />
+          </div>
         </div>
       </div>
     `;
+  }
+
+  private handleClearBack() {
+    this.editorStore.update({
+      backChoice: '',
+      backPrimaryColor: undefined,
+      backSecondaryColor: undefined,
+      backPosition: undefined,
+      backScale: undefined,
+    });
+  }
+
+  private handleClearFront() {
+    this.editorStore.update({
+      frontChoice: '',
+      frontPrimaryColor: undefined,
+      frontSecondaryColor: undefined,
+      frontPosition: undefined,
+      frontScale: undefined,
+    });
+  }
+
+  private handleClearWord1() {
+    this.editorStore.update({
+      word1Choice: '',
+      word1PrimaryColor: undefined,
+      word1SecondaryColor: undefined,
+      word1Position: undefined,
+      word1Scale: undefined,
+    });
+  }
+
+  private handleClearWord2() {
+    this.editorStore.update({
+      word2Choice: '',
+      word2PrimaryColor: undefined,
+      word2SecondaryColor: undefined,
+      word2Position: undefined,
+      word2Scale: undefined,
+    });
   }
 
   private handleTabChange(tab: Tab) {

@@ -73,6 +73,12 @@ export class EmblemImageMenu extends LitElement {
         }
       }
 
+      @media only screen and (min-width: 1000px) {
+        .image-container {
+          width: calc(100% / 8);
+        }
+      }
+
       .image-container:hover {
         border: 3px solid white;
       }

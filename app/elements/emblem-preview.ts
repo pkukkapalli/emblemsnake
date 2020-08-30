@@ -18,7 +18,7 @@ import { download, DownloadOrientation } from '../services/download-service';
 import { classMap } from 'lit-html/directives/class-map';
 import debounce from 'lodash-es/debounce';
 
-const STANDARD_POSITION_DIFF = 1;
+const STANDARD_POSITION_DIFF = 2;
 const DEFAULT_POSITION = { x: 0, y: 0 };
 const STANDARD_SCALE_DIFF = 0.1;
 
@@ -408,12 +408,10 @@ export class EmblemPreview extends LitElement {
   }
 
   private handleUndo() {
-    console.log('dispatching undo');
     this.dispatchEvent(new CustomEvent('undo'));
   }
 
   private handleRedo() {
-    console.log('dispatching redo');
     this.dispatchEvent(new CustomEvent('redo'));
   }
 
