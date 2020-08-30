@@ -16,12 +16,12 @@ function createCanvas(width: number, height: number) {
 
 function positionToCoordinates(
   position: PartPosition,
-  originalSize: number,
   sourceCanvas: HTMLCanvasElement,
   targetCanvas: HTMLCanvasElement
 ) {
-  const xDiff = (position.x / 100) * originalSize;
-  const yDiff = (position.y / 100) * originalSize;
+  const canvasSize = Math.min(sourceCanvas.width, sourceCanvas.height);
+  const xDiff = (position.x / 100) * canvasSize;
+  const yDiff = (position.y / 100) * canvasSize;
   return {
     x: (targetCanvas.width - sourceCanvas.width) / 2 + xDiff,
     y: (targetCanvas.height - sourceCanvas.height) / 2 + yDiff,
@@ -130,22 +130,22 @@ export async function download({
   }
 
   drawCanvas(
-    positionToCoordinates(backPosition, partSize, backCanvas, context.canvas),
+    positionToCoordinates(backPosition, backCanvas, context.canvas),
     context,
     backCanvas
   );
   drawCanvas(
-    positionToCoordinates(frontPosition, partSize, frontCanvas, context.canvas),
+    positionToCoordinates(frontPosition, frontCanvas, context.canvas),
     context,
     frontCanvas
   );
   drawCanvas(
-    positionToCoordinates(word1Position, partSize, word1Canvas, context.canvas),
+    positionToCoordinates(word1Position, word1Canvas, context.canvas),
     context,
     word1Canvas
   );
   drawCanvas(
-    positionToCoordinates(word2Position, partSize, word2Canvas, context.canvas),
+    positionToCoordinates(word2Position, word2Canvas, context.canvas),
     context,
     word2Canvas
   );

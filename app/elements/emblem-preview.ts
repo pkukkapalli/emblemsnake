@@ -221,13 +221,16 @@ export class EmblemPreview extends LitElement {
     position = { x: 0, y: 0 },
     scale = 1
   ) {
+    const canvasSize = Math.min(this.width || 0, this.height || 0);
+    const absoluteX = Math.floor((position.x / 100) * canvasSize);
+    const absoluteY = Math.floor((position.y / 100) * canvasSize);
     return html`
       <canvas
         id=${id}
         width=${this.width}
         height=${this.height}
         style=${styleMap({
-          transform: `scale(${scale}) translate(${position.x}%, ${position.y}%)`,
+          transform: `scale(${scale}) translate(${absoluteX}px, ${absoluteY}px)`,
         })}
       >
       </canvas>
