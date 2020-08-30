@@ -121,20 +121,22 @@ export async function download(
 ): Promise<void> {
   let wallpaperWidth;
   let wallpaperHeight;
+  let partSize;
   switch (orientation) {
     case DownloadOrientation.DESKTOP_LEFT_ALIGN:
     case DownloadOrientation.DESKTOP_CENTER_ALIGN:
     case DownloadOrientation.DESKTOP_RIGHT_ALIGN:
       wallpaperWidth = DESKTOP_WIDTH;
       wallpaperHeight = DESKTOP_HEIGHT;
+      partSize = wallpaperHeight / 2;
       break;
     case DownloadOrientation.PHONE:
       wallpaperWidth = PHONE_WIDTH;
       wallpaperHeight = PHONE_HEIGHT;
+      partSize = wallpaperWidth;
       break;
   }
 
-  const partSize = Math.floor(Math.min(wallpaperWidth, wallpaperHeight) / 2);
   const backCanvas = createCanvas(
     Math.floor(partSize * backScale),
     Math.floor(partSize * backScale)

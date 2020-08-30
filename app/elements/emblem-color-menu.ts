@@ -175,7 +175,10 @@ export class EmblemColorMenu extends LitElement {
   private renderColor(color: string): TemplateResult {
     return html`
       <div
-        class=${classMap({ color: true, selected: color === this.selection })}
+        class=${classMap({
+          color: true,
+          selected: color.toLowerCase() === this.selection?.toLowerCase(),
+        })}
         style=${styleMap({ backgroundColor: color })}
         @click=${() => this.dispatchEvent(this.createSelectEvent(color))}
       >
