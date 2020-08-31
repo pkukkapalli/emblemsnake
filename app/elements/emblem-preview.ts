@@ -21,6 +21,7 @@ import debounce from 'lodash-es/debounce';
 const STANDARD_POSITION_DIFF = 2;
 const DEFAULT_POSITION = { x: 0, y: 0 };
 const STANDARD_SCALE_DIFF = 0.1;
+const ROTATE_DIFF = 3;
 
 enum MoveDirection {
   LEFT,
@@ -32,6 +33,11 @@ enum MoveDirection {
 enum ScaleMode {
   UP,
   DOWN,
+}
+
+enum RotateDirection {
+  COUNTERCLOCKWISE,
+  CLOCKWISE,
 }
 
 @customElement('emblem-preview')
@@ -49,6 +55,8 @@ export class EmblemPreview extends LitElement {
   backPosition?: PartPosition;
   @property()
   backScale?: number;
+  @property()
+  backRotation?: number;
 
   @property()
   frontChoice?: Part;
@@ -60,6 +68,8 @@ export class EmblemPreview extends LitElement {
   frontPosition?: PartPosition;
   @property()
   frontScale?: number;
+  @property()
+  frontRotation?: number;
 
   @property()
   word1Choice?: Part;
@@ -71,6 +81,8 @@ export class EmblemPreview extends LitElement {
   word1Position?: PartPosition;
   @property()
   word1Scale?: number;
+  @property()
+  word1Rotation?: number;
 
   @property()
   word2Choice?: Part;
@@ -82,6 +94,8 @@ export class EmblemPreview extends LitElement {
   word2Position?: PartPosition;
   @property()
   word2Scale?: number;
+  @property()
+  word2Rotation?: number;
 
   @internalProperty()
   width?: number;
@@ -204,22 +218,26 @@ export class EmblemPreview extends LitElement {
         ${this.renderCanvasElement(
           'back-canvas',
           this.backPosition,
-          this.backScale
+          this.backScale,
+          this.backRotation
         )}
         ${this.renderCanvasElement(
           'front-canvas',
           this.frontPosition,
-          this.frontScale
+          this.frontScale,
+          this.frontRotation
         )}
         ${this.renderCanvasElement(
           'word1-canvas',
           this.word1Position,
-          this.word1Scale
+          this.word1Scale,
+          this.word1Rotation
         )}
         ${this.renderCanvasElement(
           'word2-canvas',
           this.word2Position,
-          this.word2Scale
+          this.word2Scale,
+          this.word2Rotation
         )}
       </div>
       <div class="move-controls">
@@ -255,6 +273,16 @@ export class EmblemPreview extends LitElement {
         <emblem-icon-button @click=${() => this.handleScaling(ScaleMode.DOWN)}
           ><img src="/assets/zoom-out.svg"
         /></emblem-icon-button>
+        <emblem-icon-button
+          @click=${() => this.handleRotating(RotateDirection.COUNTERCLOCKWISE)}
+        >
+          <img src="/assets/rotate-left.svg" />
+        </emblem-icon-button>
+        <emblem-icon-button
+          @click=${() => this.handleRotating(RotateDirection.CLOCKWISE)}
+        >
+          <img src="/assets/rotate-right.svg" />
+        </emblem-icon-button>
       </div>
       <emblem-icon-button
         class="download"
@@ -294,7 +322,8 @@ export class EmblemPreview extends LitElement {
   private renderCanvasElement(
     id: string,
     position = { x: 0, y: 0 },
-    scale = 1
+    scale = 1,
+    rotation = 0
   ) {
     const canvasSize = Math.min(this.width || 0, this.height || 0);
     const absoluteX = Math.floor((position.x / 100) * canvasSize);
@@ -305,7 +334,7 @@ export class EmblemPreview extends LitElement {
         width=${this.width}
         height=${this.height}
         style=${styleMap({
-          transform: `scale(${scale}) translate(${absoluteX}px, ${absoluteY}px)`,
+          transform: `scale(${scale}) translate(${absoluteX}px, ${absoluteY}px) rotate(${rotation}deg)`,
         })}
       >
       </canvas>
@@ -417,7 +446,7 @@ export class EmblemPreview extends LitElement {
 
   private handleKeyboard(event: KeyboardEvent) {
     if (event.ctrlKey) {
-      this.handleScalingViaKeyboard(event);
+      this.handleScalingAndRotatingViaKeyboard(event);
     } else {
       this.handleMovingViaKeyboard(event);
     }
@@ -502,13 +531,19 @@ export class EmblemPreview extends LitElement {
     return { x: position.x + diff.x, y: position.y + diff.y };
   }
 
-  private handleScalingViaKeyboard(event: KeyboardEvent) {
+  private handleScalingAndRotatingViaKeyboard(event: KeyboardEvent) {
     switch (event.key) {
       case 'ArrowUp':
         this.handleScaling(ScaleMode.UP);
         break;
       case 'ArrowDown':
         this.handleScaling(ScaleMode.DOWN);
+        break;
+      case 'ArrowLeft':
+        this.handleRotating(RotateDirection.COUNTERCLOCKWISE);
+        break;
+      case 'ArrowRight':
+        this.handleRotating(RotateDirection.CLOCKWISE);
         break;
     }
   }
@@ -556,6 +591,49 @@ export class EmblemPreview extends LitElement {
     }
   }
 
+  private handleRotating(direction: RotateDirection) {
+    let degreesDiff = 0;
+    switch (direction) {
+      case RotateDirection.COUNTERCLOCKWISE:
+        degreesDiff = -ROTATE_DIFF;
+        break;
+      case RotateDirection.CLOCKWISE:
+        degreesDiff = ROTATE_DIFF;
+        break;
+    }
+
+    switch (this.tab) {
+      case Tab.BACK:
+        this.dispatchEvent(
+          new CustomEvent('rotate-back', {
+            detail: { rotation: (this.backRotation || 0) + degreesDiff },
+          })
+        );
+        break;
+      case Tab.FRONT:
+        this.dispatchEvent(
+          new CustomEvent('rotate-front', {
+            detail: { rotation: (this.frontRotation || 0) + degreesDiff },
+          })
+        );
+        break;
+      case Tab.WORD_1:
+        this.dispatchEvent(
+          new CustomEvent('rotate-word1', {
+            detail: { rotation: (this.word1Rotation || 0) + degreesDiff },
+          })
+        );
+        break;
+      case Tab.WORD_2:
+        this.dispatchEvent(
+          new CustomEvent('rotate-word2', {
+            detail: { rotation: (this.word2Rotation || 0) + degreesDiff },
+          })
+        );
+        break;
+    }
+  }
+
   private async download(orientation: DownloadOrientation) {
     if (this.isDownloading) {
       return;
@@ -567,21 +645,25 @@ export class EmblemPreview extends LitElement {
       backSecondaryColor: this.backSecondaryColor,
       backPosition: this.backPosition,
       backScale: this.backScale,
+      backRotation: this.backRotation,
       frontChoice: this.frontChoice,
       frontPrimaryColor: this.frontPrimaryColor,
       frontSecondaryColor: this.frontSecondaryColor,
       frontPosition: this.frontPosition,
       frontScale: this.frontScale,
+      frontRotation: this.frontRotation,
       word1Choice: this.word1Choice,
       word1PrimaryColor: this.word1PrimaryColor,
       word1SecondaryColor: this.word1SecondaryColor,
       word1Position: this.word1Position,
       word1Scale: this.word1Scale,
+      word1Rotation: this.word1Rotation,
       word2Choice: this.word2Choice,
       word2PrimaryColor: this.word2PrimaryColor,
       word2SecondaryColor: this.word2SecondaryColor,
       word2Position: this.word2Position,
       word2Scale: this.word2Scale,
+      word2Rotation: this.word2Rotation,
     });
     this.isDownloading = false;
     this.isDownloadOptionsOpen = false;

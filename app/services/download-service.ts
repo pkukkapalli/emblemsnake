@@ -61,9 +61,12 @@ function positionToCoordinates(
 
 function drawCanvas(
   { x, y }: PartPosition,
+  rotation: number,
   context: CanvasRenderingContext2D,
   canvas: HTMLCanvasElement
 ) {
+  const rotationRadians = (rotation * Math.PI) / 180;
+  context.rotate(rotationRadians);
   context.drawImage(
     canvas,
     Math.floor(x),
@@ -71,6 +74,7 @@ function drawCanvas(
     canvas.width,
     canvas.height
   );
+  context.rotate(-rotationRadians);
 }
 
 export async function download(
@@ -81,42 +85,50 @@ export async function download(
     backSecondaryColor = WHITE,
     backPosition = { x: 0, y: 0 },
     backScale = 1,
+    backRotation = 0,
     frontChoice,
     frontPrimaryColor = BLACK,
     frontSecondaryColor = WHITE,
     frontPosition = { x: 0, y: 0 },
     frontScale = 1,
+    frontRotation = 0,
     word1Choice,
     word1PrimaryColor = BLACK,
     word1SecondaryColor = WHITE,
     word1Position = { x: 0, y: 0 },
     word1Scale = 1,
+    word1Rotation = 0,
     word2Choice,
     word2PrimaryColor = BLACK,
     word2SecondaryColor = WHITE,
     word2Position = { x: 0, y: 0 },
     word2Scale = 1,
+    word2Rotation = 0,
   }: {
     backChoice?: Part;
     backPrimaryColor?: string;
     backSecondaryColor?: string;
     backPosition?: PartPosition;
     backScale?: number;
+    backRotation?: number;
     frontChoice?: Part;
     frontPrimaryColor?: string;
     frontSecondaryColor?: string;
     frontPosition?: PartPosition;
     frontScale?: number;
+    frontRotation?: number;
     word1Choice?: Part;
     word1PrimaryColor?: string;
     word1SecondaryColor?: string;
     word1Position?: PartPosition;
     word1Scale?: number;
+    word1Rotation?: number;
     word2Choice?: Part;
     word2PrimaryColor?: string;
     word2SecondaryColor?: string;
     word2Position?: PartPosition;
     word2Scale?: number;
+    word2Rotation?: number;
   }
 ): Promise<void> {
   let wallpaperWidth;
@@ -186,6 +198,7 @@ export async function download(
       orientation,
       context.canvas
     ),
+    backRotation,
     context,
     backCanvas
   );
@@ -195,6 +208,7 @@ export async function download(
       orientation,
       context.canvas
     ),
+    frontRotation,
     context,
     frontCanvas
   );
@@ -204,6 +218,7 @@ export async function download(
       orientation,
       context.canvas
     ),
+    word1Rotation,
     context,
     word1Canvas
   );
@@ -213,6 +228,7 @@ export async function download(
       orientation,
       context.canvas
     ),
+    word2Rotation,
     context,
     word2Canvas
   );

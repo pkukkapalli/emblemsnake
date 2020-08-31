@@ -10,6 +10,7 @@ export interface EditorState {
   backSecondaryColor?: string;
   backPosition?: PartPosition;
   backScale?: number;
+  backRotation?: number;
 
   // Front state
   frontChoice?: string;
@@ -17,6 +18,7 @@ export interface EditorState {
   frontSecondaryColor?: string;
   frontPosition?: PartPosition;
   frontScale?: number;
+  frontRotation?: number;
 
   // Word 1
   word1Choice?: string;
@@ -24,6 +26,7 @@ export interface EditorState {
   word1SecondaryColor?: string;
   word1Position?: PartPosition;
   word1Scale?: number;
+  word1Rotation?: number;
 
   // Word 2
   word2Choice?: string;
@@ -31,6 +34,7 @@ export interface EditorState {
   word2SecondaryColor?: string;
   word2Position?: PartPosition;
   word2Scale?: number;
+  word2Rotation?: number;
 }
 
 type EditorStateListener = (state: EditorState) => void;
