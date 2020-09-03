@@ -6,7 +6,7 @@ Create [Metal Gear Solid V emblems](https://metalgear.fandom.com/wiki/Emblem) an
 
 ## Using it
 
-Visit [emblemsnake.com][https://emblemsnake.com].
+Visit [emblemsnake.com](https://emblemsnake.com).
 
 ## Developing
 
