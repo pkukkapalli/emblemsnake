@@ -1,30 +1,35 @@
-<p align="center">
-  <img width="200" src="https://open-wc.org/hero.png"></img>
-</p>
+# Codename Emblem Snake
 
-## Open-wc Starter App
+Create [Metal Gear Solid V emblems](https://metalgear.fandom.com/wiki/Emblem) and use them as phone and desktop wallpapers.
 
-[![Built with open-wc recommendations](https://img.shields.io/badge/built%20with-open--wc-blue.svg)](https://github.com/open-wc)
+![Example emblems you could create](assets/hero-image.png)
 
-## Quickstart
+## Using it
 
-To get started:
+Visit [emblemsnake.com][https://emblemsnake.com].
+
+## Developing
+
+Run the local development server:
 
 ```sh
-npm init @open-wc
-# requires node 10 & npm 6 or higher
+./scripts/app-server.sh
 ```
 
-## Scripts
+Re-scrape the emblem part images:
 
-- `start` runs your app for development, reloading on file changes
-- `start:build` runs your app after it has been built using the build command
-- `build` builds your app and outputs it in your `dist` directory
-- `test` runs your test suite with Karma
-- `lint` runs the linter for your project
+```sh
+./scripts/splash-server.sh
+```
 
-## Tooling configs
+Then, in a separate terminal:
 
-For most of the tools, the configuration is in the `package.json` to reduce the amount of files in your project.
+```sh
+./scripts/scraper.sh
+```
 
-If you customize the configuration a lot, you can consider moving them to individual files.
+Re-render the word images:
+
+```sh
+./scripts/word-renderer.js
+```

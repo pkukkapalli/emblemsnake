@@ -13,6 +13,19 @@ function clearCanvas(
   context.clearRect(0, 0, Math.floor(canvas.width), Math.floor(canvas.height));
 }
 
+function applyRotation(
+  canvas: HTMLCanvasElement,
+  context: CanvasRenderingContext2D,
+  rotation = 0
+) {
+  const rotationRadians = (rotation * Math.PI) / 180;
+  const centerWidth = Math.floor(canvas.width / 2);
+  const centerHeight = Math.floor(canvas.height / 2);
+  context.translate(centerWidth, centerHeight);
+  context.rotate(rotationRadians);
+  context.translate(-centerWidth, -centerHeight);
+}
+
 function drawImage(
   canvas: HTMLCanvasElement,
   context: CanvasRenderingContext2D,
@@ -85,7 +98,8 @@ export async function drawPart(
   canvas?: HTMLElement | null,
   choice?: Part,
   primaryColor?: string,
-  secondaryColor?: string
+  secondaryColor?: string,
+  rotation?: number
 ): Promise<void> {
   if (!canvas || !(canvas instanceof HTMLCanvasElement)) {
     return;
@@ -114,6 +128,7 @@ export async function drawPart(
         return;
       }
       clearCanvas(offscreenCanvas, offscreenContext);
+      applyRotation(offscreenCanvas, offscreenContext, rotation);
       drawImage(offscreenCanvas, offscreenContext, image);
       applyColor(
         offscreenCanvas,
