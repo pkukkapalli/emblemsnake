@@ -10,6 +10,7 @@ import {
 import { ColorsState } from '../stores/colors-store';
 import { styleMap } from 'lit-html/directives/style-map';
 import { classMap } from 'lit-html/directives/class-map';
+import { buttonStyles } from './emblem-styles';
 
 export enum Tab {
   MAIN,
@@ -32,67 +33,71 @@ export class EmblemColorMenu extends LitElement {
   @property()
   selection?: string;
 
-  static get styles(): CSSResult {
-    return css`
-      .container {
-        display: flex;
-        flex-direction: column;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-        overflow-x: hidden;
-      }
+  static get styles(): CSSResult[] {
+    return [
+      buttonStyles,
+      css`
+        .container {
+          display: flex;
+          flex-direction: column;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12),
+            0 1px 2px rgba(0, 0, 0, 0.24);
+          overflow-x: hidden;
+        }
 
-      .tabs {
-        display: flex;
-        flex-direction: row;
-        overflow-x: auto;
-      }
+        .tabs {
+          display: flex;
+          flex-direction: row;
+          overflow-x: auto;
+        }
 
-      .tab {
-        flex: 1;
-        height: 3rem;
-      }
+        .tab {
+          flex: 1;
+          height: 3rem;
+        }
 
-      .colors {
-        flex: 1;
-        background: #eee;
-      }
+        .colors {
+          flex: 1;
+          background: #eee;
+        }
 
-      .row {
-        display: flex;
-        flex-direction: row;
-      }
+        .row {
+          display: flex;
+          flex-direction: row;
+        }
 
-      .color {
-        flex: 1;
-        box-sizing: border-box;
-        border: 3px solid transparent;
-        transition: all 200ms ease-in;
-        cursor: pointer;
-        position: relative;
-      }
+        .color {
+          flex: 1;
+          box-sizing: border-box;
+          border: 3px solid transparent;
+          transition: all 200ms ease-in;
+          cursor: pointer;
+          position: relative;
+        }
 
-      .color:hover {
-        border: 3px solid white;
-      }
+        .color:hover {
+          border: 3px solid white;
+        }
 
-      .color::after {
-        content: '';
-        display: block;
-        padding-bottom: 100%;
-      }
+        .color::after {
+          content: '';
+          display: block;
+          padding-bottom: 100%;
+        }
 
-      .check {
-        position: absolute;
-        top: 0;
-        right: 0;
-        opacity: 0;
-        background: gold;
-      }
+        .check {
+          position: absolute;
+          top: 0;
+          right: 0;
+          opacity: 0;
+          background: gold;
+        }
 
-      .color.selected > .check {
-        opacity: 1;
-      }
-    `;
+        .color.selected > .check {
+          opacity: 1;
+        }
+      `,
+    ];
   }
 
   render(): TemplateResult {
@@ -196,26 +201,14 @@ export class EmblemColorMenu extends LitElement {
   }
 
   private renderTab(tab: Tab): TemplateResult {
-    if (this.tab === tab) {
-      return html`
-        <emblem-button
-          class="tab"
-          selected
-          @click=${() => this.dispatchEvent(this.createTabChangeEvent(tab))}
-        >
-          ${tabDisplayNames.get(tab)}
-        </emblem-button>
-      `;
-    } else {
-      return html`
-        <emblem-button
-          class="tab"
-          @click=${() => this.dispatchEvent(this.createTabChangeEvent(tab))}
-        >
-          ${tabDisplayNames.get(tab)}
-        </emblem-button>
-      `;
-    }
+    return html`
+      <button
+        class=${classMap({ tab: true, selected: this.tab === tab })}
+        @click=${() => this.dispatchEvent(this.createTabChangeEvent(tab))}
+      >
+        ${tabDisplayNames.get(tab)}
+      </button>
+    `;
   }
 
   private createTabChangeEvent(tab: Tab): CustomEvent {

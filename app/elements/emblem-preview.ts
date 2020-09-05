@@ -13,10 +13,10 @@ import { Tab } from './emblem-tabs';
 import { styleMap } from 'lit-html/directives/style-map';
 import { PartPosition } from '../stores/editor-store';
 import { drawPart } from '../services/draw-service';
-import './emblem-icon-button';
 import { download, DownloadOrientation } from '../services/download-service';
 import { classMap } from 'lit-html/directives/class-map';
 import debounce from 'lodash-es/debounce';
+import { buttonStyles } from './emblem-styles';
 
 const STANDARD_POSITION_DIFF = 2;
 const DEFAULT_POSITION = { x: 0, y: 0 };
@@ -106,91 +106,94 @@ export class EmblemPreview extends LitElement {
   @internalProperty()
   isDownloadOptionsOpen = false;
 
-  static get styles(): CSSResult {
-    return css`
-      :host {
-        position: relative;
-      }
+  static get styles(): CSSResult[] {
+    return [
+      buttonStyles,
+      css`
+        :host {
+          position: relative;
+        }
 
-      .container {
-        position: relative;
-        background: black;
-        height: 100%;
-        box-sizing: border-box;
-        box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25),
-          0 10px 10px rgba(0, 0, 0, 0.22);
-        overflow: hidden;
-        border: 3px solid transparent;
-        transition: all 200ms ease-in;
-      }
+        .container {
+          position: relative;
+          background: black;
+          height: 100%;
+          box-sizing: border-box;
+          box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25),
+            0 10px 10px rgba(0, 0, 0, 0.22);
+          overflow: hidden;
+          border: 3px solid transparent;
+          transition: all 200ms ease-in;
+        }
 
-      canvas {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-      }
+        canvas {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+        }
 
-      .move-controls {
-        position: absolute;
-        top: 1rem;
-        left: 1rem;
-        display: flex;
-      }
+        .move-controls {
+          position: absolute;
+          top: 1rem;
+          left: 1rem;
+          display: flex;
+        }
 
-      .move-controls emblem-icon-button:not(:first-child) {
-        margin-left: 0.5rem;
-      }
+        .move-controls button:not(:first-child) {
+          margin-left: 0.5rem;
+        }
 
-      .undo-redo {
-        position: absolute;
-        top: 1rem;
-        right: 1rem;
-        display: flex;
-      }
+        .undo-redo {
+          position: absolute;
+          top: 1rem;
+          right: 1rem;
+          display: flex;
+        }
 
-      .undo-redo emblem-icon-button:not(:first-child) {
-        margin-left: 0.5rem;
-      }
+        .undo-redo button:not(:first-child) {
+          margin-left: 0.5rem;
+        }
 
-      .scale-controls {
-        position: absolute;
-        bottom: 1rem;
-        left: 1rem;
-        display: flex;
-      }
+        .scale-controls {
+          position: absolute;
+          bottom: 1rem;
+          left: 1rem;
+          display: flex;
+        }
 
-      .scale-controls emblem-icon-button:not(:first-child) {
-        margin-left: 0.5rem;
-      }
+        .scale-controls button:not(:first-child) {
+          margin-left: 0.5rem;
+        }
 
-      .download {
-        position: absolute;
-        right: 1rem;
-        bottom: 1rem;
-      }
+        .download {
+          position: absolute;
+          right: 1rem;
+          bottom: 1rem;
+        }
 
-      .download-options {
-        position: absolute;
-        right: 1rem;
-        bottom: 1rem;
-        width: 50%;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 200ms ease-in;
-      }
+        .download-options {
+          position: absolute;
+          right: 1rem;
+          bottom: 1rem;
+          width: 50%;
+          opacity: 0;
+          pointer-events: none;
+          transition: opacity 200ms ease-in;
+        }
 
-      .download-options.open {
-        opacity: 1;
-        pointer-events: auto;
-      }
+        .download-options.open {
+          opacity: 1;
+          pointer-events: auto;
+        }
 
-      .download-options emblem-icon-button {
-        float: right;
-        margin-bottom: 1rem;
-      }
-    `;
+        .download-options button.icon {
+          margin-bottom: 1rem;
+          float: right;
+        }
+      `,
+    ];
   }
 
   connectedCallback() {
@@ -241,80 +244,96 @@ export class EmblemPreview extends LitElement {
         )}
       </div>
       <div class="move-controls">
-        <emblem-icon-button
+        <button
+          class="icon"
           @click=${() => this.handleMoving(MoveDirection.LEFT)}
         >
           <img src="/assets/left.svg" />
-        </emblem-icon-button>
-        <emblem-icon-button @click=${() => this.handleMoving(MoveDirection.UP)}
-          ><img src="/assets/up.svg"
-        /></emblem-icon-button>
-        <emblem-icon-button
+        </button>
+        <button
+          class="icon"
+          @click=${() => this.handleMoving(MoveDirection.UP)}
+        >
+          <img src="/assets/up.svg" />
+        </button>
+        <button
+          class="icon"
           @click=${() => this.handleMoving(MoveDirection.DOWN)}
-          ><img src="/assets/down.svg"
-        /></emblem-icon-button>
-        <emblem-icon-button
+        >
+          <img src="/assets/down.svg" />
+        </button>
+        <button
+          class="icon"
           @click=${() => this.handleMoving(MoveDirection.RIGHT)}
-          ><img src="/assets/right.svg"
-        /></emblem-icon-button>
+        >
+          <img src="/assets/right.svg" />
+        </button>
       </div>
       <div class="undo-redo">
-        <emblem-icon-button @click=${() => this.handleUndo()}>
+        <button class="icon" @click=${() => this.handleUndo()}>
           <img src="/assets/undo.svg" />
-        </emblem-icon-button>
-        <emblem-icon-button @click=${() => this.handleRedo()}>
+        </button>
+        <button class="icon" @click=${() => this.handleRedo()}>
           <img src="/assets/redo.svg" />
-        </emblem-icon-button>
+        </button>
       </div>
       <div class="scale-controls">
-        <emblem-icon-button @click=${() => this.handleScaling(ScaleMode.UP)}
-          ><img src="/assets/zoom-in.svg"
-        /></emblem-icon-button>
-        <emblem-icon-button @click=${() => this.handleScaling(ScaleMode.DOWN)}
-          ><img src="/assets/zoom-out.svg"
-        /></emblem-icon-button>
-        <emblem-icon-button
+        <button class="icon" @click=${() => this.handleScaling(ScaleMode.UP)}>
+          <img src="/assets/zoom-in.svg" />
+        </button>
+        <button class="icon" @click=${() => this.handleScaling(ScaleMode.DOWN)}>
+          <img src="/assets/zoom-out.svg" />
+        </button>
+        <button
+          class="icon"
           @click=${() => this.handleRotating(RotateDirection.COUNTERCLOCKWISE)}
         >
           <img src="/assets/rotate-left.svg" />
-        </emblem-icon-button>
-        <emblem-icon-button
+        </button>
+        <button
+          class="icon"
           @click=${() => this.handleRotating(RotateDirection.CLOCKWISE)}
         >
           <img src="/assets/rotate-right.svg" />
-        </emblem-icon-button>
+        </button>
       </div>
-      <emblem-icon-button
-        class="download"
+      <button
+        class="download icon"
         @click=${() => (this.isDownloadOptionsOpen = true)}
       >
         <img src="/assets/download.svg" />
-      </emblem-icon-button>
+      </button>
       <div
         class=${classMap({
           'download-options': true,
           open: this.isDownloadOptionsOpen,
         })}
       >
-        <emblem-icon-button @click=${() => (this.isDownloadOptionsOpen = false)}
-          ><img src="/assets/close.svg"
-        /></emblem-icon-button>
-        <emblem-button
-          @click=${() => this.download(DownloadOrientation.DESKTOP_LEFT_ALIGN)}
-          >Desktop Wallpaper Left-aligned</emblem-button
+        <button
+          class="icon"
+          @click=${() => (this.isDownloadOptionsOpen = false)}
         >
-        <emblem-button
+          <img src="/assets/close.svg" />
+        </button>
+        <button
+          @click=${() => this.download(DownloadOrientation.DESKTOP_LEFT_ALIGN)}
+        >
+          Desktop Wallpaper Left-aligned
+        </button>
+        <button
           @click=${() =>
             this.download(DownloadOrientation.DESKTOP_CENTER_ALIGN)}
-          >Desktop Wallpaper Center-aligned</emblem-button
         >
-        <emblem-button
+          Desktop Wallpaper Center-aligned
+        </button>
+        <button
           @click=${() => this.download(DownloadOrientation.DESKTOP_RIGHT_ALIGN)}
-          >Desktop Wallpaper Right-aligned</emblem-button
         >
-        <emblem-button @click=${() => this.download(DownloadOrientation.PHONE)}
-          >Phone Wallpaper</emblem-button
-        >
+          Desktop Wallpaper Right-aligned
+        </button>
+        <button @click=${() => this.download(DownloadOrientation.PHONE)}>
+          Phone Wallpaper
+        </button>
       </div>
     `;
   }

@@ -8,8 +8,8 @@ import {
   html,
 } from 'lit-element';
 import { PartGroupType, groupTypeDisplayNames, Part } from '../constants/parts';
-import './emblem-button';
 import { classMap } from 'lit-html/directives/class-map';
+import { buttonStyles } from './emblem-styles';
 
 @customElement('emblem-word-menu')
 export class EmblemWordMenu extends LitElement {
@@ -25,87 +25,91 @@ export class EmblemWordMenu extends LitElement {
   @property()
   selection?: string;
 
-  static get styles(): CSSResult {
-    return css`
-      .container {
-        display: flex;
-        flex-direction: column;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-        overflow: hidden;
-      }
-
-      .tabs {
-        display: flex;
-        flex-direction: row;
-        overflow-x: auto;
-      }
-
-      .tab {
-        flex: 1;
-        height: 3rem;
-        min-width: 8rem;
-      }
-
-      .words {
-        flex: 1;
-        padding: 2rem;
-        background: #eee;
-        display: flex;
-        flex-wrap: wrap;
-      }
-
-      .word-container {
-        display: inline-block;
-        position: relative;
-        width: 50%;
-        height: 3rem;
-        cursor: pointer;
-        box-sizing: border-box;
-        border: 3px solid transparent;
-        transition: border 200ms ease-in;
-        z-index: 1;
-      }
-
-      @media only screen and (min-width: 600px) {
-        .word-container {
-          width: calc(100% / 3);
+  static get styles(): CSSResult[] {
+    return [
+      buttonStyles,
+      css`
+        .container {
+          display: flex;
+          flex-direction: column;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12),
+            0 1px 2px rgba(0, 0, 0, 0.24);
+          overflow: hidden;
         }
-      }
 
-      @media only screen and (min-width: 1000px) {
-        .word-container {
-          width: 20%;
+        .tabs {
+          display: flex;
+          flex-direction: row;
+          overflow-x: auto;
         }
-      }
 
-      .word-container:hover {
-        border: 3px solid white;
-      }
+        .tab {
+          flex: 1;
+          height: 3rem;
+          min-width: 8rem;
+        }
 
-      .word {
-        position: absolute;
-        top: 0;
-        left: 0;
-        height: 3rem;
-        z-index: 2;
-        display: flex;
-        align-items: center;
-        margin-left: 1rem;
-      }
+        .words {
+          flex: 1;
+          padding: 2rem;
+          background: #eee;
+          display: flex;
+          flex-wrap: wrap;
+        }
 
-      .check {
-        opacity: 0;
-        position: absolute;
-        top: 0rem;
-        right: 0rem;
-        z-index: 3;
-        background: gold;
-      }
+        .word-container {
+          display: inline-block;
+          position: relative;
+          width: 50%;
+          height: 3rem;
+          cursor: pointer;
+          box-sizing: border-box;
+          border: 3px solid transparent;
+          transition: border 200ms ease-in;
+          z-index: 1;
+        }
 
-      .selected > .check {
-        opacity: 1;
-      }
-    `;
+        @media only screen and (min-width: 600px) {
+          .word-container {
+            width: calc(100% / 3);
+          }
+        }
+
+        @media only screen and (min-width: 1000px) {
+          .word-container {
+            width: 20%;
+          }
+        }
+
+        .word-container:hover {
+          border: 3px solid white;
+        }
+
+        .word {
+          position: absolute;
+          top: 0;
+          left: 0;
+          height: 3rem;
+          z-index: 2;
+          display: flex;
+          align-items: center;
+          margin-left: 1rem;
+        }
+
+        .check {
+          opacity: 0;
+          position: absolute;
+          top: 0rem;
+          right: 0rem;
+          z-index: 3;
+          background: gold;
+        }
+
+        .selected > .check {
+          opacity: 1;
+        }
+      `,
+    ];
   }
 
   render(): TemplateResult {
@@ -125,7 +129,7 @@ export class EmblemWordMenu extends LitElement {
 
   private renderGroup(group: PartGroupType): TemplateResult {
     return html`
-      <emblem-button
+      <button
         class="tab"
         .selected=${group === this.selectedGroup}
         @click=${() => this.dispatchEvent(this.createGroupChangeEvent(group))}

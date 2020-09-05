@@ -7,8 +7,8 @@ import {
   css,
   html,
 } from 'lit-element';
-
-import './emblem-button';
+import { buttonStyles } from './emblem-styles';
+import { classMap } from 'lit-html/directives/class-map';
 
 export enum Tab {
   BACK,
@@ -34,23 +34,26 @@ export class EmblemTabs extends LitElement {
     this.tab = Tab.BACK;
   }
 
-  static get styles(): CSSResult {
-    return css`
-      :host {
-        display: block;
-      }
+  static get styles(): CSSResult[] {
+    return [
+      buttonStyles,
+      css`
+        :host {
+          display: block;
+        }
 
-      .container {
-        display: flex;
-        flex-direction: row;
-      }
+        .container {
+          display: flex;
+          flex-direction: row;
+        }
 
-      .tab {
-        display: inline-block;
-        flex: 1;
-        min-width: 8rem;
-      }
-    `;
+        .tab {
+          display: inline-block;
+          flex: 1;
+          min-width: 8rem;
+        }
+      `,
+    ];
   }
 
   render(): TemplateResult {
@@ -63,26 +66,14 @@ export class EmblemTabs extends LitElement {
   }
 
   private renderTab(tab: Tab): TemplateResult {
-    if (this.tab === tab) {
-      return html`
-        <emblem-button
-          class="tab"
-          selected
-          @click=${() => this.dispatchEvent(this.createTabChangeEvent(tab))}
-        >
-          ${tabDisplayNames.get(tab)}
-        </emblem-button>
-      `;
-    } else {
-      return html`
-        <emblem-button
-          class="tab"
-          @click=${() => this.dispatchEvent(this.createTabChangeEvent(tab))}
-        >
-          ${tabDisplayNames.get(tab)}
-        </emblem-button>
-      `;
-    }
+    return html`
+      <button
+        class=${classMap({ tab: true, selected: this.tab === tab })}
+        @click=${() => this.dispatchEvent(this.createTabChangeEvent(tab))}
+      >
+        ${tabDisplayNames.get(tab)}
+      </button>
+    `;
   }
 
   private createTabChangeEvent(tab: Tab): CustomEvent {

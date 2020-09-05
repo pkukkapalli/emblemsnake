@@ -8,8 +8,8 @@ import {
   css,
 } from 'lit-element';
 import { PartGroupType, Part, groupTypeDisplayNames } from '../constants/parts';
-import './emblem-button';
 import { classMap } from 'lit-html/directives/class-map';
+import { buttonStyles } from './emblem-styles';
 
 @customElement('emblem-image-menu')
 export class EmblemImageMenu extends LitElement {
@@ -25,92 +25,96 @@ export class EmblemImageMenu extends LitElement {
   @property()
   selection?: string;
 
-  static get styles(): CSSResult {
-    return css`
-      :host {
-        display: flex;
-        flex-direction: column;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-      }
+  static get styles(): CSSResult[] {
+    return [
+      buttonStyles,
+      css`
+        :host {
+          display: flex;
+          flex-direction: column;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12),
+            0 1px 2px rgba(0, 0, 0, 0.24);
+        }
 
-      .tabs {
-        display: flex;
-        flex-direction: row;
-      }
+        .tabs {
+          display: flex;
+          flex-direction: row;
+        }
 
-      .tab {
-        flex: 1;
-        height: 3rem;
-      }
+        .tab {
+          flex: 1;
+          height: 3rem;
+        }
 
-      .images {
-        flex: 1;
-        background: #eee;
-        display: flex;
-        flex-wrap: wrap;
-      }
-
-      @media only screen and (min-width: 1000px) {
         .images {
-          padding: 2rem;
+          flex: 1;
+          background: #eee;
+          display: flex;
+          flex-wrap: wrap;
         }
-      }
 
-      .image-container {
-        display: inline-block;
-        position: relative;
-        width: calc(100% / 4);
-        cursor: pointer;
-        box-sizing: border-box;
-        border: 3px solid transparent;
-        transition: border 200ms ease-in;
-        z-index: 1;
-      }
+        @media only screen and (min-width: 1000px) {
+          .images {
+            padding: 2rem;
+          }
+        }
 
-      @media only screen and (min-width: 600px) {
         .image-container {
-          width: calc(100% / 6);
+          display: inline-block;
+          position: relative;
+          width: calc(100% / 4);
+          cursor: pointer;
+          box-sizing: border-box;
+          border: 3px solid transparent;
+          transition: border 200ms ease-in;
+          z-index: 1;
         }
-      }
 
-      @media only screen and (min-width: 1000px) {
-        .image-container {
-          width: calc(100% / 8);
+        @media only screen and (min-width: 600px) {
+          .image-container {
+            width: calc(100% / 6);
+          }
         }
-      }
 
-      .image-container:hover {
-        border: 3px solid white;
-      }
+        @media only screen and (min-width: 1000px) {
+          .image-container {
+            width: calc(100% / 8);
+          }
+        }
 
-      .image-container::after {
-        content: '';
-        display: block;
-        padding-bottom: 100%;
-      }
+        .image-container:hover {
+          border: 3px solid white;
+        }
 
-      .image {
-        position: absolute;
-        top: 0;
-        left: 0;
-        max-width: 100%;
-        max-height: 100%;
-        z-index: 2;
-      }
+        .image-container::after {
+          content: '';
+          display: block;
+          padding-bottom: 100%;
+        }
 
-      .check {
-        opacity: 0;
-        position: absolute;
-        top: 0rem;
-        right: 0rem;
-        z-index: 3;
-        background: gold;
-      }
+        .image {
+          position: absolute;
+          top: 0;
+          left: 0;
+          max-width: 100%;
+          max-height: 100%;
+          z-index: 2;
+        }
 
-      .selected > .check {
-        opacity: 1;
-      }
-    `;
+        .check {
+          opacity: 0;
+          position: absolute;
+          top: 0rem;
+          right: 0rem;
+          z-index: 3;
+          background: gold;
+        }
+
+        .selected > .check {
+          opacity: 1;
+        }
+      `,
+    ];
   }
 
   render(): TemplateResult {
@@ -128,13 +132,12 @@ export class EmblemImageMenu extends LitElement {
 
   private renderGroup(group: PartGroupType): TemplateResult {
     return html`
-      <emblem-button
-        class="tab"
-        .selected=${group === this.selectedGroup}
+      <button
+        class=${classMap({ tab: true, selected: this.selectedGroup === group })}
         @click=${() => this.dispatchEvent(this.createGroupChangeEvent(group))}
       >
         ${groupTypeDisplayNames.get(group)}
-      </emblem-button>
+      </button>
     `;
   }
 
