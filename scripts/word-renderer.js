@@ -15,13 +15,14 @@ const wordGroups = new Set([
 function renderWordToImage(word, path) {
   const canvas = createCanvas(1024, 1024);
   const context = canvas.getContext('2d');
+  context.imageSmoothingEnabled = true;
   context.textBaseline = 'middle';
   context.textAlign = 'center';
-  context.font = '108px "Keania One"';
+  context.font = '108px "Black Ops One"';
   context.fillStyle = 'black';
   context.fillText(word, 512, 512);
   context.strokeStyle = 'white';
-  context.lineWidth = 5;
+  context.lineWidth = 4;
   context.strokeText(word, 512, 512);
 
   const out = createWriteStream(path);

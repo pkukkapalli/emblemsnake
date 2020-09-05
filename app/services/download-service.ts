@@ -1,77 +1,16 @@
 import { PartPosition } from '../stores/editor-store';
 import { Part } from '../constants/parts';
-import { drawPart } from './draw-service';
+import 'object-hash/dist/object_hash.js';
 
 export enum DownloadOrientation {
-  DESKTOP_LEFT_ALIGN,
-  DESKTOP_CENTER_ALIGN,
-  DESKTOP_RIGHT_ALIGN,
-  PHONE,
+  DESKTOP_LEFT_ALIGN = 'DESKTOP_LEFT_ALIGN',
+  DESKTOP_CENTER_ALIGN = 'DESKTOP_CENTER_ALIGN',
+  DESKTOP_RIGHT_ALIGN = 'DESKTOP_RIGHT_ALIGN',
+  PHONE = 'PHONE',
 }
 
 const BLACK = '#000000';
 const WHITE = '#ffffff';
-const DESKTOP_WIDTH = 1920;
-const DESKTOP_HEIGHT = 1080;
-const PHONE_WIDTH = 759;
-const PHONE_HEIGHT = 1334;
-
-function createCanvas(width: number, height: number) {
-  const canvas = document.createElement('canvas');
-  canvas.width = width;
-  canvas.height = height;
-  return canvas;
-}
-
-function shiftForOrientation(
-  position: PartPosition,
-  orientation: DownloadOrientation,
-  targetCanvas: HTMLCanvasElement
-) {
-  switch (orientation) {
-    case DownloadOrientation.DESKTOP_LEFT_ALIGN:
-      return {
-        x: position.x - Math.floor(targetCanvas.width / 4),
-        y: position.y,
-      };
-    case DownloadOrientation.DESKTOP_RIGHT_ALIGN:
-      return {
-        x: position.x + Math.floor(targetCanvas.width / 4),
-        y: position.y,
-      };
-    case DownloadOrientation.DESKTOP_CENTER_ALIGN:
-    case DownloadOrientation.PHONE:
-      return position;
-  }
-}
-
-function positionToCoordinates(
-  position: PartPosition,
-  sourceCanvas: HTMLCanvasElement,
-  targetCanvas: HTMLCanvasElement
-) {
-  const canvasSize = Math.min(sourceCanvas.width, sourceCanvas.height);
-  const xDiff = (position.x / 100) * canvasSize;
-  const yDiff = (position.y / 100) * canvasSize;
-  return {
-    x: (targetCanvas.width - sourceCanvas.width) / 2 + xDiff,
-    y: (targetCanvas.height - sourceCanvas.height) / 2 + yDiff,
-  };
-}
-
-function drawCanvas(
-  { x, y }: PartPosition,
-  context: CanvasRenderingContext2D,
-  canvas: HTMLCanvasElement
-) {
-  context.drawImage(
-    canvas,
-    Math.floor(x),
-    Math.floor(y),
-    canvas.width,
-    canvas.height
-  );
-}
 
 export async function download(
   orientation: DownloadOrientation,
@@ -127,115 +66,55 @@ export async function download(
     word2Rotation?: number;
   }
 ): Promise<void> {
-  let wallpaperWidth;
-  let wallpaperHeight;
-  let partSize;
-  switch (orientation) {
-    case DownloadOrientation.DESKTOP_LEFT_ALIGN:
-    case DownloadOrientation.DESKTOP_CENTER_ALIGN:
-    case DownloadOrientation.DESKTOP_RIGHT_ALIGN:
-      wallpaperWidth = DESKTOP_WIDTH;
-      wallpaperHeight = DESKTOP_HEIGHT;
-      partSize = wallpaperHeight / 2;
-      break;
-    case DownloadOrientation.PHONE:
-      wallpaperWidth = PHONE_WIDTH;
-      wallpaperHeight = PHONE_HEIGHT;
-      partSize = wallpaperWidth;
-      break;
-  }
-
-  const backCanvas = createCanvas(
-    Math.floor(partSize * backScale),
-    Math.floor(partSize * backScale)
-  );
-  const frontCanvas = createCanvas(
-    Math.floor(partSize * frontScale),
-    Math.floor(partSize * frontScale)
-  );
-  const word1Canvas = createCanvas(
-    Math.floor(partSize * word1Scale),
-    Math.floor(partSize * word1Scale)
-  );
-  const word2Canvas = createCanvas(
-    Math.floor(partSize * word2Scale),
-    Math.floor(partSize * word2Scale)
-  );
-
-  await drawPart(
-    backCanvas,
+  const body = {
     backChoice,
     backPrimaryColor,
     backSecondaryColor,
-    backRotation
-  );
-  await drawPart(
-    frontCanvas,
+    backPosition,
+    backScale,
+    backRotation,
     frontChoice,
     frontPrimaryColor,
     frontSecondaryColor,
-    frontRotation
-  );
-  await drawPart(
-    word1Canvas,
+    frontPosition,
+    frontScale,
+    frontRotation,
     word1Choice,
     word1PrimaryColor,
     word1SecondaryColor,
-    word1Rotation
-  );
-  await drawPart(
-    word2Canvas,
+    word1Position,
+    word1Scale,
+    word1Rotation,
     word2Choice,
     word2PrimaryColor,
     word2SecondaryColor,
-    word2Rotation
+    word2Position,
+    word2Scale,
+    word2Rotation,
+    orientation,
+  };
+  const response = await fetch(
+    `http://localhost:8080/draw/${encodeURIComponent(JSON.stringify(body))}`
   );
-
-  const canvas = createCanvas(wallpaperWidth, wallpaperHeight);
-  const context = canvas.getContext('2d');
-  if (!context) {
-    return;
-  }
-
-  drawCanvas(
-    shiftForOrientation(
-      positionToCoordinates(backPosition, backCanvas, context.canvas),
-      orientation,
-      context.canvas
-    ),
-    context,
-    backCanvas
-  );
-  drawCanvas(
-    shiftForOrientation(
-      positionToCoordinates(frontPosition, frontCanvas, context.canvas),
-      orientation,
-      context.canvas
-    ),
-    context,
-    frontCanvas
-  );
-  drawCanvas(
-    shiftForOrientation(
-      positionToCoordinates(word1Position, word1Canvas, context.canvas),
-      orientation,
-      context.canvas
-    ),
-    context,
-    word1Canvas
-  );
-  drawCanvas(
-    shiftForOrientation(
-      positionToCoordinates(word2Position, word2Canvas, context.canvas),
-      orientation,
-      context.canvas
-    ),
-    context,
-    word2Canvas
-  );
+  const blob = await response.blob();
+  const url = URL.createObjectURL(blob);
 
   const link = document.createElement('a');
-  link.download = 'emblem.jpg';
-  link.href = canvas.toDataURL('image/jpeg');
+  if (word1Choice && word2Choice) {
+    link.download = `${word1Choice.name}_${word2Choice.name}.png`;
+  } else if (word1Choice) {
+    link.download = `${word1Choice.name}.png`;
+  } else if (word2Choice) {
+    link.download = `${word2Choice.name}.png`;
+  } else if (backChoice && frontChoice) {
+    link.download = `${backChoice.name}_${frontChoice.name}.png`;
+  } else if (backChoice) {
+    link.download = `${backChoice.name}.png`;
+  } else if (frontChoice) {
+    link.download = `${frontChoice.name}.png`;
+  } else {
+    link.download = 'emblem.png';
+  }
+  link.href = url;
   link.click();
 }
