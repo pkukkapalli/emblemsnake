@@ -130,8 +130,7 @@ export class EmblemWordMenu extends LitElement {
   private renderGroup(group: PartGroupType): TemplateResult {
     return html`
       <button
-        class="tab"
-        .selected=${group === this.selectedGroup}
+        class=${classMap({ tab: true, selected: this.selectedGroup === group })}
         @click=${() => this.dispatchEvent(this.createGroupChangeEvent(group))}
       >
         ${groupTypeDisplayNames.get(group)}

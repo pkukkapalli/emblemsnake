@@ -124,6 +124,7 @@ export class EmblemPreview extends LitElement {
           overflow: hidden;
           border: 3px solid transparent;
           transition: all 200ms ease-in;
+          z-index: 1;
         }
 
         canvas {
@@ -139,10 +140,7 @@ export class EmblemPreview extends LitElement {
           top: 1rem;
           left: 1rem;
           display: flex;
-        }
-
-        .move-controls button:not(:first-child) {
-          margin-left: 0.5rem;
+          z-index: 2;
         }
 
         .undo-redo {
@@ -150,10 +148,7 @@ export class EmblemPreview extends LitElement {
           top: 1rem;
           right: 1rem;
           display: flex;
-        }
-
-        .undo-redo button:not(:first-child) {
-          margin-left: 0.5rem;
+          z-index: 2;
         }
 
         .scale-controls {
@@ -161,16 +156,14 @@ export class EmblemPreview extends LitElement {
           bottom: 1rem;
           left: 1rem;
           display: flex;
-        }
-
-        .scale-controls button:not(:first-child) {
-          margin-left: 0.5rem;
+          z-index: 2;
         }
 
         .download {
           position: absolute;
           right: 1rem;
           bottom: 1rem;
+          z-index: 2;
         }
 
         .download-options {
@@ -181,6 +174,7 @@ export class EmblemPreview extends LitElement {
           opacity: 0;
           pointer-events: none;
           transition: opacity 200ms ease-in;
+          z-index: 2;
         }
 
         .download-options.open {
@@ -217,32 +211,6 @@ export class EmblemPreview extends LitElement {
 
   render(): TemplateResult {
     return html`
-      <div class="container" id="container" tabindex="0">
-        ${this.renderCanvasElement(
-          'back-canvas',
-          this.backPosition,
-          this.backScale,
-          this.backRotation
-        )}
-        ${this.renderCanvasElement(
-          'front-canvas',
-          this.frontPosition,
-          this.frontScale,
-          this.frontRotation
-        )}
-        ${this.renderCanvasElement(
-          'word1-canvas',
-          this.word1Position,
-          this.word1Scale,
-          this.word1Rotation
-        )}
-        ${this.renderCanvasElement(
-          'word2-canvas',
-          this.word2Position,
-          this.word2Scale,
-          this.word2Rotation
-        )}
-      </div>
       <div class="move-controls">
         <button
           class="icon"
@@ -334,6 +302,32 @@ export class EmblemPreview extends LitElement {
         <button @click=${() => this.download(DownloadOrientation.PHONE)}>
           Phone Wallpaper
         </button>
+      </div>
+      <div class="container" id="container" tabindex="0">
+        ${this.renderCanvasElement(
+          'back-canvas',
+          this.backPosition,
+          this.backScale,
+          this.backRotation
+        )}
+        ${this.renderCanvasElement(
+          'front-canvas',
+          this.frontPosition,
+          this.frontScale,
+          this.frontRotation
+        )}
+        ${this.renderCanvasElement(
+          'word1-canvas',
+          this.word1Position,
+          this.word1Scale,
+          this.word1Rotation
+        )}
+        ${this.renderCanvasElement(
+          'word2-canvas',
+          this.word2Position,
+          this.word2Scale,
+          this.word2Rotation
+        )}
       </div>
     `;
   }
