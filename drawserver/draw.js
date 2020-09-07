@@ -46,8 +46,8 @@ function computeCanvasSizes(orientation) {
       return {
         wallpaperWidth: SQUARE_WIDTH,
         wallpaperHeight: SQUARE_HEIGHT,
-        partWidth: SQUARE_WIDTH / 2,
-        partHeight: SQUARE_HEIGHT / 2,
+        partWidth: SQUARE_WIDTH,
+        partHeight: SQUARE_HEIGHT,
       };
     default:
       throw new Error(`invalid orientation ${orientation}`);

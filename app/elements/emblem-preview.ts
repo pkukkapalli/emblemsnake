@@ -120,7 +120,6 @@ export class EmblemPreview extends LitElement {
         .container {
           position: relative;
           background: black;
-          height: 100%;
           box-sizing: border-box;
           box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25),
             0 10px 10px rgba(0, 0, 0, 0.22);
@@ -128,18 +127,26 @@ export class EmblemPreview extends LitElement {
           border: 3px solid transparent;
           transition: all 200ms ease-in;
           z-index: 1;
+          height: 100%;
+          display: flex;
+          align-items: center;
         }
 
-        .image {
+        .image-container {
           position: absolute;
           top: 0;
           left: 0;
           width: 100%;
           height: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+
+        .image {
           display: block;
           background-position: center;
-          background-size: cotain;
-          transition: all 200ms ease-in;
+          background-size: cover;
         }
 
         .move-controls {
@@ -311,45 +318,79 @@ export class EmblemPreview extends LitElement {
         </button>
       </div>
       <div class="container" id="container" tabindex="0">
-        ${this.renderCanvasElement()}
+        ${this.renderCanvasElement(Tab.BACK)}
+        ${this.renderCanvasElement(Tab.FRONT)}
+        ${this.renderCanvasElement(Tab.WORD_1)}
+        ${this.renderCanvasElement(Tab.WORD_2)}
       </div>
     `;
   }
 
-  private renderCanvasElement() {
-    const url = getDownloadUrl(DownloadOrientation.SQUARE, {
-      backChoice: this.backChoice,
-      backPrimaryColor: this.backPrimaryColor,
-      backSecondaryColor: this.backSecondaryColor,
-      backPosition: this.backPosition,
-      backScale: this.backScale,
-      backRotation: this.backRotation,
-      frontChoice: this.frontChoice,
-      frontPrimaryColor: this.frontPrimaryColor,
-      frontSecondaryColor: this.frontSecondaryColor,
-      frontPosition: this.frontPosition,
-      frontScale: this.frontScale,
-      frontRotation: this.frontRotation,
-      word1Choice: this.word1Choice,
-      word1PrimaryColor: this.word1PrimaryColor,
-      word1SecondaryColor: this.word1SecondaryColor,
-      word1Position: this.word1Position,
-      word1Scale: this.word1Scale,
-      word1Rotation: this.word1Rotation,
-      word2Choice: this.word2Choice,
-      word2PrimaryColor: this.word2PrimaryColor,
-      word2SecondaryColor: this.word2SecondaryColor,
-      word2Position: this.word2Position,
-      word2Scale: this.word2Scale,
-      word2Rotation: this.word2Rotation,
-    });
+  private renderCanvasElement(tab: Tab) {
+    let editorConfig, position, scale, rotation;
+    switch (tab) {
+      case Tab.BACK:
+        editorConfig = {
+          backChoice: this.backChoice,
+          backPrimaryColor: this.backPrimaryColor,
+          backSecondaryColor: this.backSecondaryColor,
+        };
+        position = this.backPosition;
+        scale = this.backScale;
+        rotation = this.backRotation;
+        break;
+      case Tab.FRONT:
+        editorConfig = {
+          frontChoice: this.frontChoice,
+          frontPrimaryColor: this.frontPrimaryColor,
+          frontSecondaryColor: this.frontSecondaryColor,
+        };
+        position = this.frontPosition;
+        scale = this.frontScale;
+        rotation = this.frontRotation;
+        break;
+      case Tab.WORD_1:
+        editorConfig = {
+          word1Choice: this.word1Choice,
+          word1PrimaryColor: this.word1PrimaryColor,
+          word1SecondaryColor: this.word1SecondaryColor,
+        };
+        position = this.word1Position;
+        scale = this.word1Scale;
+        rotation = this.word1Rotation;
+        break;
+      case Tab.WORD_2:
+        editorConfig = {
+          word2Choice: this.word2Choice,
+          word2PrimaryColor: this.word2PrimaryColor,
+          word2SecondaryColor: this.word2SecondaryColor,
+        };
+        position = this.word2Position;
+        scale = this.word2Scale;
+        rotation = this.word2Rotation;
+        break;
+    }
+
+    position = position || DEFAULT_POSITION;
+    scale = scale || 1;
+    rotation = rotation || 0;
+
+    const url = getDownloadUrl(DownloadOrientation.SQUARE, editorConfig);
+    const canvasSize = Math.min(this.width || 0, this.height || 0);
+    const absoluteX = Math.floor((position.x / 100) * canvasSize);
+    const absoluteY = Math.floor((position.y / 100) * canvasSize);
     return html`
-      <div
+      <div class="image-container">
+      <img
         class="image"
+        width=${canvasSize}
+        height=${canvasSize}
+        src=${url}
         style=${styleMap({
-          backgroundImage: `url(${url})`,
+          transform: `scale(${scale}) translate(${absoluteX}px, ${absoluteY}px) rotate(${rotation}deg)`,
         })}
-      ></div>
+      ></img>
+      </div>
     `;
   }
 
