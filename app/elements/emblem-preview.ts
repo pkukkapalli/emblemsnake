@@ -12,8 +12,11 @@ import { Part } from '../constants/parts';
 import { Tab } from './emblem-tabs';
 import { styleMap } from 'lit-html/directives/style-map';
 import { PartPosition } from '../stores/editor-store';
-import { drawPart } from '../services/draw-service';
-import { download, DownloadOrientation } from '../services/download-service';
+import {
+  download,
+  DownloadOrientation,
+  getDownloadUrl,
+} from '../services/download-service';
 import { classMap } from 'lit-html/directives/class-map';
 import debounce from 'lodash-es/debounce';
 import { buttonStyles } from './emblem-styles';
@@ -98,9 +101,9 @@ export class EmblemPreview extends LitElement {
   word2Rotation?: number;
 
   @internalProperty()
-  width?: number;
+  width = 0;
   @internalProperty()
-  height?: number;
+  height = 0;
   @internalProperty()
   isDownloading = false;
   @internalProperty()
@@ -127,12 +130,16 @@ export class EmblemPreview extends LitElement {
           z-index: 1;
         }
 
-        canvas {
+        .image {
           position: absolute;
           top: 0;
           left: 0;
           width: 100%;
           height: 100%;
+          display: block;
+          background-position: center;
+          background-size: cotain;
+          transition: all 200ms ease-in;
         }
 
         .move-controls {
@@ -304,143 +311,46 @@ export class EmblemPreview extends LitElement {
         </button>
       </div>
       <div class="container" id="container" tabindex="0">
-        ${this.renderCanvasElement(
-          'back-canvas',
-          this.backPosition,
-          this.backScale,
-          this.backRotation
-        )}
-        ${this.renderCanvasElement(
-          'front-canvas',
-          this.frontPosition,
-          this.frontScale,
-          this.frontRotation
-        )}
-        ${this.renderCanvasElement(
-          'word1-canvas',
-          this.word1Position,
-          this.word1Scale,
-          this.word1Rotation
-        )}
-        ${this.renderCanvasElement(
-          'word2-canvas',
-          this.word2Position,
-          this.word2Scale,
-          this.word2Rotation
-        )}
+        ${this.renderCanvasElement()}
       </div>
     `;
   }
 
-  private renderCanvasElement(
-    id: string,
-    position = { x: 0, y: 0 },
-    scale = 1,
-    rotation = 0
-  ) {
-    const canvasSize = Math.min(this.width || 0, this.height || 0);
-    const absoluteX = Math.floor((position.x / 100) * canvasSize);
-    const absoluteY = Math.floor((position.y / 100) * canvasSize);
+  private renderCanvasElement() {
+    const url = getDownloadUrl(DownloadOrientation.SQUARE, {
+      backChoice: this.backChoice,
+      backPrimaryColor: this.backPrimaryColor,
+      backSecondaryColor: this.backSecondaryColor,
+      backPosition: this.backPosition,
+      backScale: this.backScale,
+      backRotation: this.backRotation,
+      frontChoice: this.frontChoice,
+      frontPrimaryColor: this.frontPrimaryColor,
+      frontSecondaryColor: this.frontSecondaryColor,
+      frontPosition: this.frontPosition,
+      frontScale: this.frontScale,
+      frontRotation: this.frontRotation,
+      word1Choice: this.word1Choice,
+      word1PrimaryColor: this.word1PrimaryColor,
+      word1SecondaryColor: this.word1SecondaryColor,
+      word1Position: this.word1Position,
+      word1Scale: this.word1Scale,
+      word1Rotation: this.word1Rotation,
+      word2Choice: this.word2Choice,
+      word2PrimaryColor: this.word2PrimaryColor,
+      word2SecondaryColor: this.word2SecondaryColor,
+      word2Position: this.word2Position,
+      word2Scale: this.word2Scale,
+      word2Rotation: this.word2Rotation,
+    });
     return html`
-      <canvas
-        id=${id}
-        width=${this.width}
-        height=${this.height}
+      <div
+        class="image"
         style=${styleMap({
-          transform: `scale(${scale}) translate(${absoluteX}px, ${absoluteY}px) rotate(${rotation}deg)`,
+          backgroundImage: `url(${url})`,
         })}
-      >
-      </canvas>
+      ></div>
     `;
-  }
-
-  async updated(changedProperties: Map<string, object>) {
-    if (this.backHasChanged(changedProperties)) {
-      this.drawImage(
-        'back-canvas',
-        this.backChoice,
-        this.backPrimaryColor,
-        this.backSecondaryColor
-      );
-    }
-    if (this.frontHasChanged(changedProperties)) {
-      this.drawImage(
-        'front-canvas',
-        this.frontChoice,
-        this.frontPrimaryColor,
-        this.frontSecondaryColor
-      );
-    }
-    if (this.word1HasChanged(changedProperties)) {
-      this.drawImage(
-        'word1-canvas',
-        this.word1Choice,
-        this.word1PrimaryColor,
-        this.word1SecondaryColor
-      );
-    }
-    if (this.word2HasChanged(changedProperties)) {
-      this.drawImage(
-        'word2-canvas',
-        this.word2Choice,
-        this.word2PrimaryColor,
-        this.word2SecondaryColor
-      );
-    }
-  }
-
-  private backHasChanged(changedProperties: Map<string, object>) {
-    return (
-      changedProperties.has('backChoice') ||
-      changedProperties.has('backPrimaryColor') ||
-      changedProperties.has('backSecondaryColor') ||
-      changedProperties.has('width') ||
-      changedProperties.has('height')
-    );
-  }
-
-  private frontHasChanged(changedProperties: Map<string, object>) {
-    return (
-      changedProperties.has('frontChoice') ||
-      changedProperties.has('frontPrimaryColor') ||
-      changedProperties.has('frontSecondaryColor') ||
-      changedProperties.has('width') ||
-      changedProperties.has('height')
-    );
-  }
-
-  private word1HasChanged(changedProperties: Map<string, object>) {
-    return (
-      changedProperties.has('word1Choice') ||
-      changedProperties.has('word1PrimaryColor') ||
-      changedProperties.has('word1SecondaryColor') ||
-      changedProperties.has('width') ||
-      changedProperties.has('height')
-    );
-  }
-
-  private word2HasChanged(changedProperties: Map<string, object>) {
-    return (
-      changedProperties.has('word2Choice') ||
-      changedProperties.has('word2PrimaryColor') ||
-      changedProperties.has('word2SecondaryColor') ||
-      changedProperties.has('width') ||
-      changedProperties.has('height')
-    );
-  }
-
-  private async drawImage(
-    canvasId: string,
-    part?: Part,
-    primaryColor?: string,
-    secondaryColor?: string
-  ): Promise<void> {
-    if (!this.width || !this.height) {
-      return;
-    }
-
-    const element = this.shadowRoot?.getElementById(canvasId);
-    return drawPart(element, part, primaryColor, secondaryColor);
   }
 
   private updateWidthAndHeight() {

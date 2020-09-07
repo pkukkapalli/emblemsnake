@@ -9,6 +9,7 @@ const corsOptions = {
 };
 
 app.get('/draw/:object', cors(corsOptions), async (request, response) => {
+  console.log(JSON.parse(decodeURIComponent(request.params.object)));
   const canvas = await draw(
     JSON.parse(decodeURIComponent(request.params.object))
   );
