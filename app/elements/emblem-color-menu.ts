@@ -7,10 +7,10 @@ import {
   TemplateResult,
   html,
 } from 'lit-element';
-import { ColorsState } from '../stores/colors-store';
 import { styleMap } from 'lit-html/directives/style-map';
 import { classMap } from 'lit-html/directives/class-map';
 import { buttonStyles } from './emblem-styles';
+import { ColorsState } from '../common/colors';
 
 export enum Tab {
   MAIN,
@@ -24,7 +24,7 @@ const tabDisplayNames = new Map([
 
 @customElement('emblem-color-menu')
 export class EmblemColorMenu extends LitElement {
-  @property({ type: Object })
+  @property()
   colorsState?: ColorsState;
 
   @property()

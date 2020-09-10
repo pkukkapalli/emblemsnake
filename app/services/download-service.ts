@@ -1,6 +1,5 @@
-import { PartPosition } from '../stores/editor-store';
-import { Part } from '../constants/parts';
-import 'object-hash/dist/object_hash.js';
+import { Part } from '../common/parts';
+import { PartPosition } from '../common/editor';
 
 export enum DownloadOrientation {
   DESKTOP_LEFT_ALIGN = 'DESKTOP_LEFT_ALIGN',

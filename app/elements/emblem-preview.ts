@@ -8,10 +8,9 @@ import {
   html,
   internalProperty,
 } from 'lit-element';
-import { Part } from '../constants/parts';
+import { Part } from '../common/parts';
 import { Tab } from './emblem-tabs';
 import { styleMap } from 'lit-html/directives/style-map';
-import { PartPosition } from '../stores/editor-store';
 import {
   download,
   DownloadOrientation,
@@ -20,6 +19,7 @@ import {
 import { classMap } from 'lit-html/directives/class-map';
 import debounce from 'lodash-es/debounce';
 import { buttonStyles } from './emblem-styles';
+import { PartPosition } from '../common/editor';
 
 const STANDARD_POSITION_DIFF = 2;
 const DEFAULT_POSITION = { x: 0, y: 0 };

@@ -7,7 +7,7 @@ import {
   CSSResult,
   css,
 } from 'lit-element';
-import { PartGroupType, Part, groupTypeDisplayNames } from '../constants/parts';
+import { PartGroupType, Part, groupTypeDisplayNames } from '../common/parts';
 import { classMap } from 'lit-html/directives/class-map';
 import { buttonStyles } from './emblem-styles';
 

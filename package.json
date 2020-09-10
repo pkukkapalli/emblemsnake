@@ -60,12 +60,12 @@
   "author": "emblem-app",
   "license": "MIT",
   "dependencies": {
+    "compression": "^1.7.4",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "lit-element": "^2.0.1",
     "lit-html": "^1.0.0",
     "lodash-es": "^4.17.15",
-    "object-hash": "^2.0.3",
     "pwa-helpers": "^0.9.1"
   },
   "eslintConfig": {

@@ -2,28 +2,31 @@ import {
   LitElement,
   html,
   customElement,
-  property,
   TemplateResult,
   CSSResult,
   css,
   internalProperty,
 } from 'lit-element';
-import { PartsStore, PartsState } from '../stores/parts-store';
 import {
   Part,
   backGroupTypes,
   PartGroupType,
   frontGroupTypes,
   wordGroupTypes,
-} from '../constants/parts';
-import { ColorsStore, ColorsState } from '../stores/colors-store';
+  loadingPartsState,
+  PartsState,
+} from '../common/parts';
 import { Tab } from './emblem-tabs';
 import { Tab as ColorTab } from './emblem-color-menu';
 import './emblem-image-menu';
 import './emblem-word-menu';
 import './emblem-preview';
-import { EditorState, EditorStore } from '../stores/editor-store';
+import { editorStore } from '../stores/editor-store';
 import { classMap } from 'lit-html/directives/class-map';
+import { loadingColorsState, ColorsState } from '../common/colors';
+import { EditorState } from '../common/editor';
+import { colorsStore } from '../stores/colors-store';
+import { partsStore } from '../stores/parts-store';
 
 const defaultGroupForTab = new Map([
   [Tab.BACK, PartGroupType.BACK_NORMAL],
@@ -38,18 +41,14 @@ const ORIGIN = { x: 0, y: 0 };
 
 @customElement('emblem-app')
 export class EmblemApp extends LitElement {
-  private readonly partsStore: PartsStore;
-  private readonly colorsStore: ColorsStore;
-  private readonly editorStore: EditorStore;
+  @internalProperty()
+  private partsState: PartsState;
 
-  @property()
-  partsState?: PartsState;
+  @internalProperty()
+  private colorsState: ColorsState;
 
-  @property()
-  colorsState?: ColorsState;
-
-  @property()
-  editorState?: EditorState;
+  @internalProperty()
+  private editorState: EditorState;
 
   @internalProperty()
   private tab = Tab.BACK;
@@ -65,14 +64,17 @@ export class EmblemApp extends LitElement {
 
   constructor() {
     super();
-    this.partsStore = new PartsStore(state => {
-      this.partsState = state;
-    });
-    this.colorsStore = new ColorsStore(state => {
+    this.colorsState = colorsStore.state || loadingColorsState();
+    this.editorState = editorStore.state || {};
+    this.partsState = partsStore.state || loadingPartsState();
+    colorsStore.listen(state => {
       this.colorsState = state;
     });
-    this.editorStore = new EditorStore(state => {
+    editorStore.listen(state => {
       this.editorState = state;
+    });
+    partsStore.listen(state => {
+      this.partsState = state;
     });
   }
 
@@ -169,20 +171,13 @@ export class EmblemApp extends LitElement {
     `;
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-    this.partsStore.connect();
-    this.colorsStore.connect();
-    this.editorStore.connect();
-  }
-
   render(): TemplateResult {
     return html`
       <div class="container">
         <emblem-preview
           .tab=${this.tab}
-          @undo=${() => this.editorStore?.undo()}
-          @redo=${() => this.editorStore?.redo()}
+          @undo=${() => editorStore.undo()}
+          @redo=${() => editorStore.redo()}
           .backChoice=${this.getBackChoice()}
           .backPrimaryColor=${this.editorState?.backPrimaryColor}
           .backSecondaryColor=${this.editorState?.backSecondaryColor}
@@ -294,7 +289,7 @@ export class EmblemApp extends LitElement {
   }
 
   private handleClearBack() {
-    this.editorStore.update({
+    editorStore.update({
       backChoice: '',
       backPrimaryColor: BLACK,
       backSecondaryColor: WHITE,
@@ -305,7 +300,7 @@ export class EmblemApp extends LitElement {
   }
 
   private handleClearFront() {
-    this.editorStore.update({
+    editorStore.update({
       frontChoice: '',
       frontPrimaryColor: BLACK,
       frontSecondaryColor: WHITE,
@@ -316,7 +311,7 @@ export class EmblemApp extends LitElement {
   }
 
   private handleClearWord1() {
-    this.editorStore.update({
+    editorStore.update({
       word1Choice: '',
       word1PrimaryColor: BLACK,
       word1SecondaryColor: WHITE,
@@ -327,7 +322,7 @@ export class EmblemApp extends LitElement {
   }
 
   private handleClearWord2() {
-    this.editorStore.update({
+    editorStore.update({
       word2Choice: '',
       word2PrimaryColor: BLACK,
       word2SecondaryColor: WHITE,
@@ -406,16 +401,16 @@ export class EmblemApp extends LitElement {
   private handlePartSelection(event: CustomEvent) {
     switch (this.tab) {
       case Tab.BACK:
-        this.editorStore.update({ backChoice: event.detail.selection });
+        editorStore.update({ backChoice: event.detail.selection });
         break;
       case Tab.FRONT:
-        this.editorStore.update({ frontChoice: event.detail.selection });
+        editorStore.update({ frontChoice: event.detail.selection });
         break;
       case Tab.WORD_1:
-        this.editorStore.update({ word1Choice: event.detail.selection });
+        editorStore.update({ word1Choice: event.detail.selection });
         break;
       case Tab.WORD_2:
-        this.editorStore.update({ word2Choice: event.detail.selection });
+        editorStore.update({ word2Choice: event.detail.selection });
         break;
     }
   }
@@ -423,16 +418,16 @@ export class EmblemApp extends LitElement {
   private handlePrimaryColorSelection(event: CustomEvent) {
     switch (this.tab) {
       case Tab.BACK:
-        this.editorStore.update({ backPrimaryColor: event.detail.selection });
+        editorStore.update({ backPrimaryColor: event.detail.selection });
         break;
       case Tab.FRONT:
-        this.editorStore.update({ frontPrimaryColor: event.detail.selection });
+        editorStore.update({ frontPrimaryColor: event.detail.selection });
         break;
       case Tab.WORD_1:
-        this.editorStore.update({ word1PrimaryColor: event.detail.selection });
+        editorStore.update({ word1PrimaryColor: event.detail.selection });
         break;
       case Tab.WORD_2:
-        this.editorStore.update({ word2PrimaryColor: event.detail.selection });
+        editorStore.update({ word2PrimaryColor: event.detail.selection });
         break;
     }
   }
@@ -440,20 +435,20 @@ export class EmblemApp extends LitElement {
   private handleSecondaryColorSelection(event: CustomEvent) {
     switch (this.tab) {
       case Tab.BACK:
-        this.editorStore.update({ backSecondaryColor: event.detail.selection });
+        editorStore.update({ backSecondaryColor: event.detail.selection });
         break;
       case Tab.FRONT:
-        this.editorStore.update({
+        editorStore.update({
           frontSecondaryColor: event.detail.selection,
         });
         break;
       case Tab.WORD_1:
-        this.editorStore.update({
+        editorStore.update({
           word1SecondaryColor: event.detail.selection,
         });
         break;
       case Tab.WORD_2:
-        this.editorStore.update({
+        editorStore.update({
           word2SecondaryColor: event.detail.selection,
         });
         break;
@@ -461,51 +456,51 @@ export class EmblemApp extends LitElement {
   }
 
   private handleMoveBack(event: CustomEvent) {
-    this.editorStore.update({ backPosition: event.detail });
+    editorStore.update({ backPosition: event.detail });
   }
 
   private handleScaleBack(event: CustomEvent) {
-    this.editorStore.update({ backScale: event.detail.scale });
+    editorStore.update({ backScale: event.detail.scale });
   }
 
   private handleRotateBack(event: CustomEvent) {
-    this.editorStore.update({ backRotation: event.detail.rotation });
+    editorStore.update({ backRotation: event.detail.rotation });
   }
 
   private handleMoveFront(event: CustomEvent) {
-    this.editorStore.update({ frontPosition: event.detail });
+    editorStore.update({ frontPosition: event.detail });
   }
 
   private handleScaleFront(event: CustomEvent) {
-    this.editorStore.update({ frontScale: event.detail.scale });
+    editorStore.update({ frontScale: event.detail.scale });
   }
 
   private handleRotateFront(event: CustomEvent) {
-    this.editorStore.update({ frontRotation: event.detail.rotation });
+    editorStore.update({ frontRotation: event.detail.rotation });
   }
 
   private handleMoveWord1(event: CustomEvent) {
-    this.editorStore.update({ word1Position: event.detail });
+    editorStore.update({ word1Position: event.detail });
   }
 
   private handleScaleWord1(event: CustomEvent) {
-    this.editorStore.update({ word1Scale: event.detail.scale });
+    editorStore.update({ word1Scale: event.detail.scale });
   }
 
   private handleRotateWord1(event: CustomEvent) {
-    this.editorStore.update({ word1Rotation: event.detail.rotation });
+    editorStore.update({ word1Rotation: event.detail.rotation });
   }
 
   private handleMoveWord2(event: CustomEvent) {
-    this.editorStore.update({ word2Position: event.detail });
+    editorStore.update({ word2Position: event.detail });
   }
 
   private handleScaleWord2(event: CustomEvent) {
-    this.editorStore.update({ word2Scale: event.detail.scale });
+    editorStore.update({ word2Scale: event.detail.scale });
   }
 
   private handleRotateWord2(event: CustomEvent) {
-    this.editorStore.update({ word2Rotation: event.detail.rotation });
+    editorStore.update({ word2Rotation: event.detail.rotation });
   }
 
   private getPartSelection(): string {

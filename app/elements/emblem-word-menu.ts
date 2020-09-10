@@ -7,7 +7,7 @@ import {
   TemplateResult,
   html,
 } from 'lit-element';
-import { PartGroupType, groupTypeDisplayNames, Part } from '../constants/parts';
+import { PartGroupType, groupTypeDisplayNames, Part } from '../common/parts';
 import { classMap } from 'lit-html/directives/class-map';
 import { buttonStyles } from './emblem-styles';
 

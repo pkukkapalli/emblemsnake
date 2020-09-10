@@ -1,88 +1,20 @@
-export interface ColorsState {
-  isLoading: boolean;
-  error?: string;
-  grayscale: string[];
-  grayscaleAlternative: string[];
-  bluescale: string[];
-  bluescaleAlternative: string[];
-  cyanscale: string[];
-  cyanscaleAlternative: string[];
-  greenscale: string[];
-  greenscaleAlternative: string[];
-  orangescale: string[];
-  orangescaleAlternative: string[];
-  pinkscale: string[];
-  pinkscaleAlternative: string[];
-  purplescale: string[];
-  purplescaleAlternative: string[];
-  redscale: string[];
-  redscaleAlternative: string[];
-  yellowscale: string[];
-  yellowscaleAlternative: string[];
-}
+import {
+  loadingColorsState,
+  errorColorsState,
+  ColorsState,
+} from '../common/colors';
+import { BaseStore } from './base-store';
 
-export function loadingState(): ColorsState {
-  return {
-    isLoading: true,
-    grayscale: [],
-    grayscaleAlternative: [],
-    bluescale: [],
-    bluescaleAlternative: [],
-    cyanscale: [],
-    cyanscaleAlternative: [],
-    greenscale: [],
-    greenscaleAlternative: [],
-    orangescale: [],
-    orangescaleAlternative: [],
-    pinkscale: [],
-    pinkscaleAlternative: [],
-    purplescale: [],
-    purplescaleAlternative: [],
-    redscale: [],
-    redscaleAlternative: [],
-    yellowscale: [],
-    yellowscaleAlternative: [],
-  };
-}
-
-function errorState(error: string): ColorsState {
-  return {
-    isLoading: false,
-    error,
-    grayscale: [],
-    grayscaleAlternative: [],
-    bluescale: [],
-    bluescaleAlternative: [],
-    cyanscale: [],
-    cyanscaleAlternative: [],
-    greenscale: [],
-    greenscaleAlternative: [],
-    orangescale: [],
-    orangescaleAlternative: [],
-    pinkscale: [],
-    pinkscaleAlternative: [],
-    purplescale: [],
-    purplescaleAlternative: [],
-    redscale: [],
-    redscaleAlternative: [],
-    yellowscale: [],
-    yellowscaleAlternative: [],
-  };
-}
-
-type ColorsStateListener = (palette: ColorsState) => void;
-
-export class ColorsStore {
-  private readonly listener: ColorsStateListener;
-
-  constructor(listener: ColorsStateListener) {
-    this.listener = listener;
+export class ColorsStore extends BaseStore<ColorsState> {
+  constructor() {
+    super();
+    this.state = loadingColorsState();
+    this.connect();
   }
 
-  async connect(): Promise<void> {
-    this.listener(loadingState());
+  private async connect(): Promise<void> {
     try {
-      this.listener({
+      this.setState({
         isLoading: false,
         bluescale: await this.fetchColorscale('/assets/bluescale.txt'),
         bluescaleAlternative: await this.fetchColorscale(
@@ -122,7 +54,7 @@ export class ColorsStore {
         ),
       });
     } catch (error) {
-      this.listener(errorState(error));
+      this.setState(errorColorsState(error));
     }
   }
 
@@ -132,3 +64,5 @@ export class ColorsStore {
     return text.split('\n').filter(color => color);
   }
 }
+
+export const colorsStore = new ColorsStore();
