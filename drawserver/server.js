@@ -5,13 +5,9 @@ const { draw } = require('./draw');
 
 const app = express();
 
-const corsOptions = {
-  origin: ['http://localhost:8000'],
-};
-
 app.get(
-  '/draw/:object',
-  cors(corsOptions),
+  '/api/draw/:object',
+  cors(),
   compression(),
   async (request, response) => {
     const canvas = await draw(
