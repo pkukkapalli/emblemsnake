@@ -5,6 +5,10 @@ const { draw } = require('./draw');
 
 const app = express();
 
+app.get('/api/healthcheck', (request, response) => {
+  response.send('Healthy');
+});
+
 app.get(
   '/api/draw/:object',
   cors(),
