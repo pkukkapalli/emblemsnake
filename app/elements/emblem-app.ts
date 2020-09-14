@@ -62,6 +62,9 @@ export class EmblemApp extends LitElement {
   @internalProperty()
   private secondaryColorTab = ColorTab.MAIN;
 
+  @internalProperty()
+  private isInfoOpen = true;
+
   constructor() {
     super();
     this.colorsState = colorsStore.state || loadingColorsState();
@@ -108,6 +111,38 @@ export class EmblemApp extends LitElement {
         overflow-x: auto;
         margin-bottom: 2rem;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+      }
+
+      .info {
+        display: flex;
+        align-items: center;
+        background: #eee;
+        margin-left: 1rem;
+        margin-right: 1rem;
+        margin-bottom: 1rem;
+        padding: 0.5rem 1rem;
+        line-height: 0;
+      }
+
+      .info-hidden {
+        display: none;
+      }
+
+      .info:not(:first-child) {
+        margin-right: 1rem;
+      }
+
+      .info-message {
+        flex: 1;
+      }
+
+      .info-icon {
+        margin-right: 1rem;
+      }
+
+      .remove-info {
+        margin-left: 1rem;
+        cursor: pointer;
       }
 
       .tags-container {
@@ -217,8 +252,8 @@ export class EmblemApp extends LitElement {
         >
         </emblem-preview>
         <div class="menu">
-          ${this.renderTabs()} ${this.renderTags()} ${this.renderColors()}
-          ${this.renderParts()}
+          ${this.renderTabs()} ${this.renderInfo()} ${this.renderTags()}
+          ${this.renderColors()} ${this.renderParts()}
         </div>
       </div>
     `;
@@ -249,6 +284,26 @@ export class EmblemApp extends LitElement {
             this.handleTabChange(event.detail.tab)}
         >
         </emblem-tabs>
+      </div>
+    `;
+  }
+
+  private renderInfo(): TemplateResult {
+    return html`
+      <div class=${classMap({ info: true, 'info-hidden': !this.isInfoOpen })}>
+        <div class="info-icon"><img src="/assets/info.svg" /></div>
+        <div class="info-message">
+          See how this was made on
+          <a href="https://github.com/pkukkapalli/emblemsnake">Github</a>.
+        </div>
+        <div
+          class="remove-info"
+          @click=${() => {
+            this.isInfoOpen = false;
+          }}
+        >
+          <img src="/assets/close.svg" />
+        </div>
       </div>
     `;
   }
