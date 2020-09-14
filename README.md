@@ -51,3 +51,7 @@ Then, in a separate terminal:
 ```
 
 `splash-server.sh` runs a Docker instance of [Splash](https://www.scrapinghub.com/splash/) to run the Javascript on webpages visited by the scraper.
+
+## Acknowledgments
+
+Thanks to Kojima Productions and Konami for making MGSV, particularly the Mother Base emblems.
