@@ -16,8 +16,8 @@ const DESKTOP_WIDTH = 1920;
 const DESKTOP_HEIGHT = 1080;
 const PHONE_WIDTH = 759;
 const PHONE_HEIGHT = 1334;
-const SQUARE_WIDTH = 1024;
-const SQUARE_HEIGHT = 1024;
+const SQUARE_WIDTH = 512;
+const SQUARE_HEIGHT = 512;
 
 /**
  * Compute an appropriate size based on the orientation of the emblem.
