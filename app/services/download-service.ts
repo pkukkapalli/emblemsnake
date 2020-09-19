@@ -12,14 +12,6 @@ export enum DownloadOrientation {
 const BLACK = '#000000';
 const WHITE = '#ffffff';
 
-function getApiUrl() {
-  if (location.hostname === 'localhost') {
-    return 'http://localhost:8080/api/draw/';
-  } else {
-    return '/api/draw/';
-  }
-}
-
 export function getDownloadUrl(
   orientation: DownloadOrientation,
   {
@@ -101,7 +93,7 @@ export function getDownloadUrl(
     word2Rotation,
     orientation,
   };
-  return getApiUrl() + encodeURIComponent(JSON.stringify(body));
+  return `/api/draw/${encodeURIComponent(JSON.stringify(body))}`;
 }
 
 export async function download(
@@ -186,7 +178,7 @@ export async function download(
     orientation,
   };
   const response = await fetch(
-    getApiUrl() + encodeURIComponent(JSON.stringify(body))
+    `/api/draw/${encodeURIComponent(JSON.stringify(body))}`
   );
   const blob = await response.blob();
   const url = URL.createObjectURL(blob);
