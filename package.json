@@ -10,11 +10,10 @@
     "test:watch": "concurrently --kill-others --names tsc,karma \"npm run tsc:watch\" \"karma start --auto-watch=true --single-run=false\"",
     "build": "rimraf dist && tsc && rollup -c rollup.config.js && cp 404.html dist && cp -R assets/ dist/assets/",
     "start:build": "npm run build && npm run server:build",
-    "start": "concurrently --kill-others --names tsc,node \"npm run tsc:watch\" \"npm run server\"",
+    "start": "concurrently --kill-others --names tsc \"npm run tsc:watch\" \"node server.js\"",
     "tsc:build": "tsc",
     "tsc:watch": "tsc --watch",
-    "server:build": "NODE_ENV=production node server.js",
-    "server": "node server.js"
+    "server:build": "NODE_ENV=production node server.js"
   },
   "devDependencies": {
     "@open-wc/building-rollup": "^1.0.0",
