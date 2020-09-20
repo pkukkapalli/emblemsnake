@@ -42,4 +42,22 @@ Next, you'll notice in the bottom left-hand corner of the preview that there are
 
 ![Buttons for scaling and rotating the parts](assets/scaling-and-rotating.png)
 
+# Undo & Redo
 
+At some point you may want to undo/redo some changes as you've been working on your emblem. To do this you can simply use the undo and redo buttons in the top right-hand corner of the preview.
+
+![Buttons for undoing and redoing actions](assets/undo-redo.png)
+
+# Downloading
+
+Finally, after you're satisfied with your emblem, you can download it as a desktop wallpaper or phone wallpaper.
+
+![Button for downloading wallpapers](assets/download.png)
+
+![Buttons for downloading different wallpapers](assets/download-menu.png)
+
+# Removing parts
+
+Finally, you can also remove parts from your emblem using the tags just under the main tabs.
+
+![Tags for removing parts](assets/tags.png)
