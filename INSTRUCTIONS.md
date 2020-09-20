@@ -28,8 +28,18 @@ You can also apply colors to each part. You can choose a primary color and a sec
 
 # Positioning
 
-You can also move each part around. Depending on which tab you've selected, the arrow buttons will move the selected part around on your screen. They are located in the top right-hand corner of the preview.
+You can also move each part around. Depending on which tab you've selected, the arrow buttons will move the selected part around on your screen. They are located in the top left-hand corner of the preview.
 
 *Hint:* if you're on a desktop or laptop, you can also click on the preview and move the part around with your arrow keys.
 
 ![Buttons for moving the parts](assets/arrow-keys.png)
+
+# Scaling & Rotating
+
+Next, you'll notice in the bottom left-hand corner of the preview that there are also buttons for scaling a part up/down, and rotating it left/right.
+
+*Hint:* if you're on a desktop or laptop, you can also use the control key + the arrow keys to scale and rotate the part.
+
+![Buttons for scaling and rotating the parts](assets/scaling-and-rotating.png)
+
+
