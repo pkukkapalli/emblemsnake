@@ -7,7 +7,7 @@ const app = express();
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static('dist', { maxAge: 6.048e8 }));
 } else {
-  app.use(express.static('.'));
+  app.use(express.static('dist'));
 }
 
 app.get('/api/draw/:object', compression(), async (request, response) => {
