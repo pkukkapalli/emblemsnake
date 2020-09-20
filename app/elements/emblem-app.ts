@@ -293,8 +293,11 @@ export class EmblemApp extends LitElement {
       <div class=${classMap({ info: true, 'info-hidden': !this.isInfoOpen })}>
         <div class="info-icon"><img src="/assets/info.svg" /></div>
         <div class="info-message">
-          See how this was made on
-          <a href="https://github.com/pkukkapalli/emblemsnake">Github</a>.
+          <a
+            href="https://github.com/pkukkapalli/emblemsnake/blob/master/INSTRUCTIONS.md"
+            >Click here for instructions</a
+          >, and read the code on
+          <a href="https://github.com/pkukkapalli/emblemsnake">GitHub</a>.
         </div>
         <div
           class="remove-info"
