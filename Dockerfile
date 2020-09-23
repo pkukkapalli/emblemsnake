@@ -2,7 +2,9 @@ FROM node:current-slim
 
 WORKDIR /usr/src/app
 
-COPY package*.json ./
+COPY package.json .
+COPY assets assets
+COPY drawserver drawserver
 
 RUN apt-get update && apt-get install -y \
   build-essential \
@@ -12,10 +14,8 @@ RUN apt-get update && apt-get install -y \
   libgif-dev \
   librsvg2-dev
 
-RUN npm install --also=dev
-
-COPY . .
+RUN npm install
 
 EXPOSE 8080
 
-CMD ["npm", "run", "start:build"]
+CMD ["node", "drawserver/server.js"]

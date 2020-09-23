@@ -8,12 +8,11 @@
     "format": "npm run format:eslint && npm run format:prettier",
     "test": "tsc && karma start --coverage",
     "test:watch": "concurrently --kill-others --names tsc,karma \"npm run tsc:watch\" \"karma start --auto-watch=true --single-run=false\"",
-    "build": "rimraf dist && tsc && rollup -c rollup.config.js && cp 404.html dist && cp -R assets/ dist/assets/",
-    "start:build": "npm run build && npm run server:build",
-    "start": "rimraf dist && mkdir -p dist && cp 404.html dist && cp -R assets/ dist/assets/ && concurrently --kill-others --names tsc,rollup \"npm run tsc:watch\" \"ROLLUP_WATCH=true rollup -c rollup.config.js -w\" \"node server.js\"",
+    "build": "rimraf dist && tsc && rollup -c rollup.config.js && cp 404.html dist",
+    "start:build": "npm run build && es-dev-server --root-dir dist --app-index index.html --open --compatibility none",
+    "start": "concurrently --kill-others --names tsc,es-dev-server \"npm run tsc:watch\" \"es-dev-server --app-index index.html --node-resolve --open --watch\"",
     "tsc:build": "tsc",
-    "tsc:watch": "tsc --watch",
-    "server:build": "NODE_ENV=production node server.js"
+    "tsc:watch": "tsc --watch"
   },
   "devDependencies": {
     "@open-wc/building-rollup": "^1.0.0",
@@ -25,8 +24,10 @@
     "@types/object-hash": "^1.3.3",
     "@typescript-eslint/eslint-plugin": "^2.20.0",
     "@typescript-eslint/parser": "^2.20.0",
+    "canvas": "^2.6.1",
     "concurrently": "^5.1.0",
     "deepmerge": "^3.2.0",
+    "es-dev-server": "^1.5.0",
     "eslint": "^6.1.0",
     "eslint-config-prettier": "^6.11.0",
     "husky": "^1.0.0",
@@ -34,6 +35,7 @@
     "prettier": "^2.0.4",
     "rimraf": "^2.6.3",
     "rollup": "^2.3.4",
+    "tslib": "^1.11.0",
     "typescript": "^3.8.2"
   },
   "prettier": {
@@ -58,13 +60,13 @@
   "author": "emblem-app",
   "license": "MIT",
   "dependencies": {
-    "canvas": "^2.6.1",
     "compression": "^1.7.4",
+    "cors": "^2.8.5",
     "express": "^4.17.1",
     "lit-element": "^2.0.1",
     "lit-html": "^1.0.0",
     "lodash-es": "^4.17.15",
-    "tslib": "^1.11.0"
+    "pwa-helpers": "^0.9.1"
   },
   "eslintConfig": {
     "extends": [
