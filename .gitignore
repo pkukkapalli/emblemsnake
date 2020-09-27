@@ -24,3 +24,6 @@
 /crawl.log
 /.scrapy/
 /*.code-workspace
+
+# firebase
+.firebase

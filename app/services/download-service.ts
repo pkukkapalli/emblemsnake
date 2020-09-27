@@ -16,7 +16,7 @@ function getApiUrl() {
   if (location.hostname === 'localhost') {
     return 'http://localhost:8080/api/draw/';
   } else {
-    return '/api/draw/';
+    return 'https://api.emblemsnake.com/api/draw/';
   }
 }
 
