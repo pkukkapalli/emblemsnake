@@ -21,5 +21,5 @@ module.exports = {
     'import/named': 'off',
     'import/no-unresolved': 'off',
   },
-  ignorePatterns: ['drawserver/*.js', 'scripts/*.js'],
+  ignorePatterns: ['drawserver/*.js', 'scripts/*.js', 'index.html'],
 };
