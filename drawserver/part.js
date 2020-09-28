@@ -17,23 +17,6 @@ function parseColor(color) {
 }
 
 /**
- * Scale each channel in a  seven-character CSS hex code by a given factor
- * @param {string} color
- * @param {number} rScale
- * @param {number} gScale
- * @param {number} bScale
- * @returns {{r: number, g: number, b: number}}
- */
-function scaleColor(color, rScale, gScale, bScale) {
-  const { r, g, b } = parseColor(color);
-  return {
-    r: Math.floor(rScale * r),
-    g: Math.floor(gScale * g),
-    b: Math.floor(bScale * b),
-  };
-}
-
-/**
  * Rotate the given canvas
  * @param {import('canvas').Canvas} canvas The canvas to rotate
  * @param {number} rotation The number of degrees to rotate by
@@ -87,22 +70,13 @@ function applyColor(canvas, primaryColor, secondaryColor) {
       const bScale = b / 255;
 
       if (r < 128 && g < 128 && b < 128 && a > 0) {
-        const color = scaleColor(
-          primaryColor || BLACK,
-          1 - rScale,
-          1 - gScale,
-          1 - bScale
-        );
+        const color = parseColor(primaryColor || BLACK);
         imageData.data[index] = color.r;
         imageData.data[index + 1] = color.g;
         imageData.data[index + 2] = color.b;
+        imageData.data[index + 3] = 255;
       } else if (r >= 128 && g >= 128 && b >= 128 && a > 0) {
-        const color = scaleColor(
-          secondaryColor || WHITE,
-          rScale,
-          gScale,
-          bScale
-        );
+        const color = parseColor(secondaryColor || WHITE);
         imageData.data[index] = color.r;
         imageData.data[index + 1] = color.g;
         imageData.data[index + 2] = color.b;

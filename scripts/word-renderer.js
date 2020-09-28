@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-/* eslint-disable @typescript-eslint/no-var-requires */
 const { readFileSync, writeFileSync, createWriteStream } = require('fs');
 const { createCanvas } = require('canvas');
 

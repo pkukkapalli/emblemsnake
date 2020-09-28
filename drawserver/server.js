@@ -14,11 +14,11 @@ app.get(
   cors(),
   compression(),
   async (request, response) => {
-    const canvas = await draw(
+    const buffer = await draw(
       JSON.parse(decodeURIComponent(request.params.object))
     );
     response.setHeader('Cache-Control', `public, max-age=${604800}`);
-    response.send(canvas.toBuffer('image/png'));
+    response.send(buffer);
   }
 );
 

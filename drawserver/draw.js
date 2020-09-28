@@ -219,7 +219,7 @@ async function draw({
     drawOntoCanvas(word2Canvas, targetCanvas, word2Position, orientation);
   }
 
-  return targetCanvas;
+  return targetCanvas.toBuffer('image/png');
 }
 
 module.exports = { draw };
