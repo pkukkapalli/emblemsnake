@@ -8,24 +8,24 @@ Visit [emblemsnake.com](https://emblemsnake.com).
 
 ## Developing locally
 
+**Make sure you have [Docker](docker.com) installed first.**
+
 First install the npm packages:
 
-```sh
+```sh*
 npm install --also=dev
+```
+
+Start up the drawserver, which draws all of the emblems:
+
+```sh
+./scripts/draw-server.sh
 ```
 
 Then, start the development server and open http://localhost:8080:
 
 ```sh
 npm start
-```
-
-## Test the production server
-
-The app is deployed using [Docker](docker.com). If you want to test out the Docker container locally, run:
-
-```sh
-./scripts/docker-server.sh
 ```
 
 ## Gather image assets

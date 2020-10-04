@@ -47,6 +47,16 @@ function drawImage(canvas, image) {
 }
 
 /**
+ * Scales a color component to a valid value
+ * @param {number} colorComponent
+ * @param {number} scale
+ * @returns {number}
+ */
+function scaleColorComponent(colorComponent, scale) {
+  return Math.max(0, Math.min(255, Math.floor(colorComponent * scale)));
+}
+
+/**
  * Switch the primary and secondary (black and white) to the given colors
  * @param {import('canvas').Canvas} canvas The canvas to color
  * @param {string} primaryColor The color to replace black with
@@ -69,17 +79,16 @@ function applyColor(canvas, primaryColor, secondaryColor) {
       const gScale = g / 255;
       const bScale = b / 255;
 
-      if (r < 128 && g < 128 && b < 128 && a > 0) {
+      if (r <= 128 && g <= 128 && b <= 128 && a > 0) {
         const color = parseColor(primaryColor || BLACK);
-        imageData.data[index] = color.r;
-        imageData.data[index + 1] = color.g;
-        imageData.data[index + 2] = color.b;
-        imageData.data[index + 3] = 255;
-      } else if (r >= 128 && g >= 128 && b >= 128 && a > 0) {
+        imageData.data[index] = scaleColorComponent(color.r, 1 - rScale);
+        imageData.data[index + 1] = scaleColorComponent(color.g, 1 - gScale);
+        imageData.data[index + 2] = scaleColorComponent(color.b, 1 - bScale);
+      } else if (r > 128 && g > 128 && b > 128 && a > 0) {
         const color = parseColor(secondaryColor || WHITE);
-        imageData.data[index] = color.r;
-        imageData.data[index + 1] = color.g;
-        imageData.data[index + 2] = color.b;
+        imageData.data[index] = scaleColorComponent(color.r, rScale);
+        imageData.data[index + 1] = scaleColorComponent(color.g, gScale);
+        imageData.data[index + 2] = scaleColorComponent(color.b, bScale);
       }
     }
   }
