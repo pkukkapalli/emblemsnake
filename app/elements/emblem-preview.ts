@@ -206,6 +206,10 @@ export class EmblemPreview extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
+    window.addEventListener(
+      'resize',
+      debounce(() => this.updateWidthAndHeight(), 100)
+    );
     window.addEventListener('keydown', (event: KeyboardEvent) => {
       if (
         this.shadowRoot?.activeElement !==
@@ -219,11 +223,8 @@ export class EmblemPreview extends LitElement {
   }
 
   firstUpdated() {
+    // Update the width and height for the first time after the DOM is rendered.
     this.updateWidthAndHeight();
-    window.addEventListener(
-      'resize',
-      debounce(() => this.updateWidthAndHeight(), 100)
-    );
   }
 
   render(): TemplateResult {
