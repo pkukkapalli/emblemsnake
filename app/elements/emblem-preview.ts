@@ -209,7 +209,7 @@ export class EmblemPreview extends LitElement {
     this.updateWidthAndHeight();
     window.addEventListener(
       'resize',
-      debounce(() => this.updateWidthAndHeight(), 500)
+      debounce(() => this.updateWidthAndHeight(), 100)
     );
     window.addEventListener('keydown', (event: KeyboardEvent) => {
       if (
