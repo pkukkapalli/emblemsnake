@@ -9,7 +9,7 @@ import {
 } from 'lit-element';
 import { PartGroupType, Part, groupTypeDisplayNames } from '../common/parts';
 import { classMap } from 'lit-html/directives/class-map';
-import { buttonStyles } from './emblem-styles';
+import { buttonStyles, menuItemStyles } from './emblem-styles';
 
 @customElement('emblem-image-menu')
 export class EmblemImageMenu extends LitElement {
@@ -28,6 +28,7 @@ export class EmblemImageMenu extends LitElement {
   static get styles(): CSSResult[] {
     return [
       buttonStyles,
+      menuItemStyles,
       css`
         :host {
           display: flex;
@@ -65,8 +66,6 @@ export class EmblemImageMenu extends LitElement {
           width: calc(100% / 4);
           cursor: pointer;
           box-sizing: border-box;
-          border: 3px solid transparent;
-          transition: border 200ms ease-in;
           z-index: 1;
         }
 
@@ -80,10 +79,6 @@ export class EmblemImageMenu extends LitElement {
           .image-container {
             width: calc(100% / 8);
           }
-        }
-
-        .image-container:hover {
-          border: 3px solid white;
         }
 
         .image-container::after {
@@ -154,6 +149,7 @@ export class EmblemImageMenu extends LitElement {
       <div
         class=${classMap({
           'image-container': true,
+          'menu-item': true,
           selected: key === this.selection,
         })}
         @click=${() => this.dispatchEvent(this.createSelectEvent(key))}

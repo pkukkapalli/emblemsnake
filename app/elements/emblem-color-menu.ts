@@ -9,7 +9,7 @@ import {
 } from 'lit-element';
 import { styleMap } from 'lit-html/directives/style-map';
 import { classMap } from 'lit-html/directives/class-map';
-import { buttonStyles } from './emblem-styles';
+import { buttonStyles, menuItemStyles } from './emblem-styles';
 import { ColorsState } from '../common/colors';
 
 export enum Tab {
@@ -36,13 +36,14 @@ export class EmblemColorMenu extends LitElement {
   static get styles(): CSSResult[] {
     return [
       buttonStyles,
+      menuItemStyles,
       css`
         .container {
           display: flex;
           flex-direction: column;
           box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12),
             0 1px 2px rgba(0, 0, 0, 0.24);
-          overflow-x: hidden;
+          overflow: visible;
         }
 
         .tabs {
@@ -59,6 +60,7 @@ export class EmblemColorMenu extends LitElement {
         .colors {
           flex: 1;
           background: #eee;
+          overflow: visible;
         }
 
         .row {
@@ -69,14 +71,8 @@ export class EmblemColorMenu extends LitElement {
         .color {
           flex: 1;
           box-sizing: border-box;
-          border: 3px solid transparent;
-          transition: all 200ms ease-in;
           cursor: pointer;
           position: relative;
-        }
-
-        .color:hover {
-          border: 3px solid white;
         }
 
         .color::after {
@@ -182,6 +178,7 @@ export class EmblemColorMenu extends LitElement {
       <div
         class=${classMap({
           color: true,
+          'menu-item': true,
           selected: color.toLowerCase() === this.selection?.toLowerCase(),
         })}
         style=${styleMap({ backgroundColor: color })}

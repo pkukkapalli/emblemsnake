@@ -124,8 +124,6 @@ export class EmblemPreview extends LitElement {
           box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25),
             0 10px 10px rgba(0, 0, 0, 0.22);
           overflow: hidden;
-          border: 3px solid transparent;
-          transition: all 200ms ease-in;
           z-index: 1;
           height: 100%;
           display: flex;
