@@ -121,7 +121,6 @@ export class EmblemApp extends LitElement {
         margin-right: 1rem;
         margin-bottom: 1rem;
         padding: 0.5rem 1rem;
-        line-height: 0;
       }
 
       .info-hidden {
