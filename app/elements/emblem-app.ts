@@ -23,7 +23,7 @@ import './emblem-word-menu';
 import './emblem-preview';
 import { editorStore } from '../stores/editor-store';
 import { classMap } from 'lit-html/directives/class-map';
-import { loadingColorsState, ColorsState } from '../common/colors';
+import { ColorsState } from '../common/colors';
 import { EditorState } from '../common/editor';
 import { colorsStore } from '../stores/colors-store';
 import { partsStore } from '../stores/parts-store';
@@ -67,7 +67,7 @@ export class EmblemApp extends LitElement {
 
   constructor() {
     super();
-    this.colorsState = colorsStore.state || loadingColorsState();
+    this.colorsState = colorsStore.state!;
     this.editorState = editorStore.state || {};
     this.partsState = partsStore.state || loadingPartsState();
     colorsStore.listen(state => {

@@ -126,11 +126,7 @@ export class EmblemColorMenu extends LitElement {
   }
 
   private renderCrossColorRow(index: number): TemplateResult {
-    if (
-      !this.colorsState ||
-      this.colorsState.isLoading ||
-      this.colorsState.error
-    ) {
+    if (!this.colorsState) {
       return html`<div></div>`;
     }
 
