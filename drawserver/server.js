@@ -17,7 +17,7 @@ app.get(
     const buffer = await draw(
       JSON.parse(decodeURIComponent(request.params.object))
     );
-    response.setHeader('Cache-Control', `public, max-age=${604800}`);
+    response.setHeader('Cache-Control', `public, max-age=${2592000}`);
     response.send(buffer);
   }
 );
